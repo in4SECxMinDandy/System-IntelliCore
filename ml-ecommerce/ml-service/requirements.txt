@@ -1,0 +1,48 @@
+# ==========================================
+# ML Service — Python Dependencies
+# ==========================================
+
+# Web Framework
+fastapi==0.109.2
+uvicorn[standard]==0.27.1
+pydantic==2.6.1
+pydantic-settings==2.2.1
+python-multipart==0.0.9
+
+# Database
+asyncpg==0.29.0
+sqlalchemy[asyncio]==2.0.27
+psycopg2-binary==2.9.9
+motor==3.3.2  # Async MongoDB
+
+# Cache
+redis==5.0.1
+
+# ML Core
+numpy==1.26.4
+pandas==2.2.0
+scipy==1.12.0
+scikit-learn==1.4.0
+
+# Collaborative Filtering
+implicit==0.7.2
+
+# Deep Learning
+torch==2.2.0
+torchvision==0.17.0
+
+# Model Tracking
+mlflow==2.10.0
+
+# Task Queue
+celery==5.3.6
+celery[redis]==5.3.6
+
+# Data Processing
+pyarrow==15.0.0
+
+# Utilities
+python-dotenv==1.0.1
+httpx==0.26.0
+tenacity==8.2.3
+loguru==0.7.2
