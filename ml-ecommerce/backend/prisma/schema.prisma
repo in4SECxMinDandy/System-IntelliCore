@@ -1,5 +1,5 @@
 // ==========================================
-// Prisma Schema — ML Ecommerce
+// Prisma Schema — IntelliCore ML Ecommerce v2
 // PostgreSQL 15
 // ==========================================
 
@@ -17,17 +17,23 @@ datasource db {
 // ==========================================
 
 model User {
-  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email          String    @unique @db.VarChar(255)
-  passwordHash   String    @map("password_hash") @db.VarChar(255)
-  fullName       String?   @map("full_name") @db.VarChar(255)
-  phone          String?   @db.VarChar(20)
-  avatarUrl      String?   @map("avatar_url")
-  role           UserRole  @default(customer)
-  isActive       Boolean   @default(true) @map("is_active")
-  emailVerified  Boolean   @default(false) @map("email_verified")
-  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email             String    @unique @db.VarChar(255)
+  passwordHash      String    @map("password_hash") @db.VarChar(255)
+  fullName          String?   @map("full_name") @db.VarChar(255)
+  phone             String?   @db.VarChar(20)
+  avatarUrl         String?   @map("avatar_url")
+  role              UserRole  @default(customer)
+  isActive          Boolean   @default(true) @map("is_active")
+  emailVerified     Boolean   @default(false) @map("email_verified")
+  twoFactorEnabled  Boolean   @default(false) @map("two_factor_enabled")
+  twoFactorSecret   String?   @map("two_factor_secret") @db.VarChar(255)
+  preferredLanguage String    @default("en") @map("preferred_language") @db.VarChar(10)
+  preferredCurrency String    @default("USD") @map("preferred_currency") @db.VarChar(10)
+  loyaltyPoints     Int       @default(0) @map("loyalty_points")
+  lastLoginAt       DateTime? @map("last_login_at") @db.Timestamptz
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
 
   // Relations
   refreshTokens       RefreshToken[]
@@ -39,6 +45,14 @@ model User {
   notifications       Notification[]
   userEvents          UserEvent[]
   recommendationLogs  RecommendationLog[]
+  communityPosts      CommunityPost[]
+  communityComments   CommunityComment[]
+  communityLikes      CommunityLike[]
+  challengeEntries    ChallengeEntry[]
+  followers           UserFollow[]        @relation("Following")
+  following           UserFollow[]        @relation("Follower")
+  loginHistory        LoginHistory[]
+  inventoryLogs       InventoryLog[]
 
   @@map("users")
 }
@@ -62,6 +76,20 @@ model RefreshToken {
   @@map("refresh_tokens")
 }
 
+model LoginHistory {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  ipAddress  String?  @map("ip_address") @db.VarChar(45)
+  userAgent  String?  @map("user_agent")
+  location   String?  @db.VarChar(255)
+  success    Boolean  @default(true)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("login_history")
+}
+
 model Address {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId    String   @map("user_id") @db.Uuid
@@ -71,6 +99,8 @@ model Address {
   district  String?  @db.VarChar(100)
   ward      String?  @db.VarChar(100)
   street    String?
+  country   String   @default("US") @db.VarChar(10)
+  zipCode   String?  @map("zip_code") @db.VarChar(20)
   isDefault Boolean  @default(false) @map("is_default")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
 
@@ -94,7 +124,6 @@ model Category {
   isActive    Boolean    @default(true) @map("is_active")
   createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz
 
-  // Self-relation for parent/child categories
   parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
   children Category[] @relation("CategoryHierarchy")
 
@@ -130,19 +159,24 @@ model Product {
   costPrice         Decimal? @map("cost_price") @db.Decimal(15, 2)
   sku               String?  @unique @db.VarChar(100)
   stockQuantity     Int      @default(0) @map("stock_quantity")
+  reservedQuantity  Int      @default(0) @map("reserved_quantity")
   minOrderQuantity  Int      @default(1) @map("min_order_quantity")
+  maxOrderQuantity  Int?     @map("max_order_quantity")
   weight            Decimal? @db.Decimal(10, 3)
+  dimensions        Json?
   tags              String[]
   metaTitle         String?  @map("meta_title") @db.VarChar(255)
   metaDescription   String?  @map("meta_description")
   isActive          Boolean  @default(true) @map("is_active")
   isFeatured        Boolean  @default(false) @map("is_featured")
+  isDigital         Boolean  @default(false) @map("is_digital")
   viewCount         Int      @default(0) @map("view_count")
   purchaseCount     Int      @default(0) @map("purchase_count")
+  averageRating     Decimal  @default(0) @map("average_rating") @db.Decimal(3, 2)
+  reviewCount       Int      @default(0) @map("review_count")
   createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
-  // Relations
   category    Category?          @relation(fields: [categoryId], references: [id])
   brand       Brand?             @relation(fields: [brandId], references: [id])
   images      ProductImage[]
@@ -153,9 +187,11 @@ model Product {
   reviews     Review[]
   wishlists   Wishlist[]
   userEvents  UserEvent[]
+  inventoryLogs InventoryLog[]
 
   @@index([categoryId], name: "idx_products_category")
   @@index([isActive], name: "idx_products_active")
+  @@index([averageRating], name: "idx_products_rating")
   @@map("products")
 }
 
@@ -191,12 +227,59 @@ model ProductVariant {
   price         Decimal? @db.Decimal(15, 2)
   stockQuantity Int      @default(0) @map("stock_quantity")
   imageUrl      String?  @map("image_url")
+  attributes    Json?
 
   product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
   orderItems OrderItem[]
   cartItems  CartItem[]
 
   @@map("product_variants")
+}
+
+// ==========================================
+// INVENTORY MANAGEMENT
+// ==========================================
+
+model InventoryLog {
+  id          String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productId   String            @map("product_id") @db.Uuid
+  userId      String?           @map("user_id") @db.Uuid
+  type        InventoryLogType  @map("type")
+  quantity    Int
+  previousQty Int               @map("previous_qty")
+  newQty      Int               @map("new_qty")
+  reason      String?           @db.VarChar(255)
+  reference   String?           @db.VarChar(100)
+  notes       String?
+  createdAt   DateTime          @default(now()) @map("created_at") @db.Timestamptz
+
+  product Product @relation(fields: [productId], references: [id])
+  user    User?   @relation(fields: [userId], references: [id])
+
+  @@index([productId], name: "idx_inventory_product")
+  @@map("inventory_logs")
+}
+
+enum InventoryLogType {
+  restock
+  sale
+  return
+  adjustment
+  damage
+  transfer
+}
+
+model Supplier {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String   @db.VarChar(255)
+  email       String?  @db.VarChar(255)
+  phone       String?  @db.VarChar(20)
+  address     String?
+  country     String?  @db.VarChar(100)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("suppliers")
 }
 
 // ==========================================
@@ -210,16 +293,21 @@ model Order {
   status          OrderStatus   @default(pending)
   paymentStatus   PaymentStatus @default(unpaid) @map("payment_status")
   paymentMethod   String?       @map("payment_method") @db.VarChar(30)
+  paymentIntentId String?       @map("payment_intent_id") @db.VarChar(255)
   shippingAddress Json?         @map("shipping_address")
   subtotal        Decimal?      @db.Decimal(15, 2)
   shippingFee     Decimal       @default(0) @map("shipping_fee") @db.Decimal(15, 2)
+  taxAmount       Decimal       @default(0) @map("tax_amount") @db.Decimal(15, 2)
   discountAmount  Decimal       @default(0) @map("discount_amount") @db.Decimal(15, 2)
   totalAmount     Decimal?      @map("total_amount") @db.Decimal(15, 2)
   notes           String?
   couponCode      String?       @map("coupon_code") @db.VarChar(50)
   trackingNumber  String?       @map("tracking_number") @db.VarChar(100)
+  shippingCarrier String?       @map("shipping_carrier") @db.VarChar(50)
   shippedAt       DateTime?     @map("shipped_at") @db.Timestamptz
   deliveredAt     DateTime?     @map("delivered_at") @db.Timestamptz
+  cancelledAt     DateTime?     @map("cancelled_at") @db.Timestamptz
+  cancelReason    String?       @map("cancel_reason")
   createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz
 
@@ -229,6 +317,7 @@ model Order {
 
   @@index([userId], name: "idx_orders_user")
   @@index([status], name: "idx_orders_status")
+  @@index([createdAt(sort: Desc)], name: "idx_orders_created")
   @@map("orders")
 }
 
@@ -247,6 +336,7 @@ enum PaymentStatus {
   paid
   refunded
   failed
+  pending
 }
 
 model OrderItem {
@@ -374,6 +464,129 @@ model FlashSaleItem {
 }
 
 // ==========================================
+// COMMUNITY
+// ==========================================
+
+model CommunityPost {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  content     String
+  images      String[]
+  tags        String[]
+  productId   String?   @map("product_id") @db.Uuid
+  likeCount   Int       @default(0) @map("like_count")
+  commentCount Int      @default(0) @map("comment_count")
+  shareCount  Int       @default(0) @map("share_count")
+  isApproved  Boolean   @default(true) @map("is_approved")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments CommunityComment[]
+  likes    CommunityLike[]
+
+  @@index([userId], name: "idx_community_posts_user")
+  @@index([createdAt(sort: Desc)], name: "idx_community_posts_created")
+  @@map("community_posts")
+}
+
+model CommunityComment {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  postId    String   @map("post_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  content   String
+  parentId  String?  @map("parent_id") @db.Uuid
+  likeCount Int      @default(0) @map("like_count")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  post     CommunityPost    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent   CommunityComment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies  CommunityComment[] @relation("CommentReplies")
+
+  @@map("community_comments")
+}
+
+model CommunityLike {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  postId    String   @map("post_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  post CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@map("community_likes")
+}
+
+model UserFollow {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  followerId  String   @map("follower_id") @db.Uuid
+  followingId String   @map("following_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  follower  User @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("user_follows")
+}
+
+model Challenge {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title        String    @db.VarChar(255)
+  description  String?
+  emoji        String?   @db.VarChar(10)
+  prize        String?   @db.VarChar(255)
+  difficulty   String    @default("medium") @db.VarChar(20)
+  maxParticipants Int?   @map("max_participants")
+  startsAt     DateTime? @map("starts_at") @db.Timestamptz
+  endsAt       DateTime? @map("ends_at") @db.Timestamptz
+  isActive     Boolean   @default(true) @map("is_active")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  entries ChallengeEntry[]
+
+  @@map("challenges")
+}
+
+model ChallengeEntry {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  challengeId String   @map("challenge_id") @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  content     String?
+  score       Int      @default(0)
+  rank        Int?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  challenge Challenge @relation(fields: [challengeId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([challengeId, userId])
+  @@map("challenge_entries")
+}
+
+// ==========================================
+// PAYMENTS
+// ==========================================
+
+model Payment {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId         String        @map("order_id") @db.Uuid
+  provider        String        @db.VarChar(50)
+  providerTxId    String?       @map("provider_tx_id") @db.VarChar(255)
+  amount          Decimal       @db.Decimal(15, 2)
+  currency        String        @default("USD") @db.VarChar(10)
+  status          PaymentStatus @default(pending)
+  metadata        Json?
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("payments")
+}
+
+// ==========================================
 // ML: USER EVENTS (Event Tracking)
 // ==========================================
 
@@ -411,6 +624,9 @@ enum EventType {
   purchase
   review
   click_recommendation
+  chatbot_interaction
+  community_post
+  community_like
 }
 
 // ==========================================
@@ -474,9 +690,43 @@ model Notification {
   message   String?
   data      Json?
   isRead    Boolean  @default(false) @map("is_read")
+  actionUrl String?  @map("action_url")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId, isRead], name: "idx_notifications_user_read")
   @@map("notifications")
+}
+
+// ==========================================
+// CHATBOT
+// ==========================================
+
+model ChatSession {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String?   @map("user_id") @db.Uuid
+  sessionId String    @unique @map("session_id") @db.VarChar(100)
+  messages  Json      @default("[]")
+  context   Json?
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("chat_sessions")
+}
+
+// ==========================================
+// THIRD-PARTY INTEGRATIONS
+// ==========================================
+
+model Integration {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String   @db.VarChar(100)
+  type        String   @db.VarChar(50)
+  config      Json
+  isActive    Boolean  @default(true) @map("is_active")
+  lastSyncAt  DateTime? @map("last_sync_at") @db.Timestamptz
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("integrations")
 }

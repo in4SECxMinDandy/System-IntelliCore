@@ -1,84 +1,93 @@
 import { create } from 'zustand';
-import api from '@/lib/api';
-import toast from 'react-hot-toast';
+import { persist } from 'zustand/middleware';
 
-interface CartItem {
+export interface CartItem {
   id: string;
-  productId: string;
-  variantId?: string;
+  name: string;
+  price: number;
+  image?: string;
   quantity: number;
-  product: {
-    id: string;
-    name: string;
-    slug: string;
-    basePrice: number;
-    salePrice?: number;
-    images: { url: string }[];
-  };
+  variantId?: string;
+  variantName?: string;
+  sku?: string;
 }
 
-interface CartState {
+interface CartStore {
   items: CartItem[];
-  loading: boolean;
-  fetchCart: () => Promise<void>;
-  addItem: (productId: string, quantity?: number, variantId?: string) => Promise<void>;
-  updateItem: (itemId: string, quantity: number) => Promise<void>;
-  removeItem: (itemId: string) => Promise<void>;
-  clearCart: () => Promise<void>;
+  addItem: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void;
+  removeItem: (id: string, variantId?: string) => void;
+  updateQuantity: (id: string, quantity: number, variantId?: string) => void;
+  clearCart: () => void;
   totalItems: () => number;
   totalPrice: () => number;
+  hasItem: (id: string, variantId?: string) => boolean;
 }
 
-export const useCartStore = create<CartState>((set, get) => ({
-  items: [],
-  loading: false,
+export const useCartStore = create<CartStore>()(
+  persist(
+    (set, get) => ({
+      items: [],
 
-  fetchCart: async () => {
-    try {
-      set({ loading: true });
-      const { data } = await api.get('/cart');
-      set({ items: data.data?.cartItems || [] });
-    } catch {} finally {
-      set({ loading: false });
+      addItem: (item) => {
+        set((state) => {
+          const existingIndex = state.items.findIndex(
+            i => i.id === item.id && i.variantId === item.variantId
+          );
+
+          if (existingIndex >= 0) {
+            const updatedItems = [...state.items];
+            updatedItems[existingIndex] = {
+              ...updatedItems[existingIndex],
+              quantity: updatedItems[existingIndex].quantity + (item.quantity || 1),
+            };
+            return { items: updatedItems };
+          }
+
+          return {
+            items: [...state.items, { ...item, quantity: item.quantity || 1 }],
+          };
+        });
+      },
+
+      removeItem: (id, variantId) => {
+        set((state) => ({
+          items: state.items.filter(
+            i => !(i.id === id && i.variantId === variantId)
+          ),
+        }));
+      },
+
+      updateQuantity: (id, quantity, variantId) => {
+        if (quantity <= 0) {
+          get().removeItem(id, variantId);
+          return;
+        }
+        set((state) => ({
+          items: state.items.map(i =>
+            i.id === id && i.variantId === variantId
+              ? { ...i, quantity }
+              : i
+          ),
+        }));
+      },
+
+      clearCart: () => set({ items: [] }),
+
+      totalItems: () => {
+        return get().items.reduce((sum, item) => sum + item.quantity, 0);
+      },
+
+      totalPrice: () => {
+        return get().items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      },
+
+      hasItem: (id, variantId) => {
+        return get().items.some(i => i.id === id && i.variantId === variantId);
+      },
+    }),
+    {
+      name: 'intellicore-cart',
+      version: 1,
     }
-  },
-
-  addItem: async (productId, quantity = 1, variantId) => {
-    try {
-      await api.post('/cart/items', { productId, quantity, variantId });
-      await get().fetchCart();
-      toast.success('Added to cart');
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to add to cart');
-    }
-  },
-
-  updateItem: async (itemId, quantity) => {
-    try {
-      await api.put(`/cart/items/${itemId}`, { quantity });
-      await get().fetchCart();
-    } catch {}
-  },
-
-  removeItem: async (itemId) => {
-    try {
-      await api.delete(`/cart/items/${itemId}`);
-      await get().fetchCart();
-      toast.success('Removed from cart');
-    } catch {}
-  },
-
-  clearCart: async () => {
-    try {
-      await api.delete('/cart');
-      set({ items: [] });
-    } catch {}
-  },
-
-  totalItems: () => get().items.reduce((sum, item) => sum + item.quantity, 0),
-
-  totalPrice: () => get().items.reduce((sum, item) => {
-    const price = item.product.salePrice || item.product.basePrice;
-    return sum + price * item.quantity;
-  }, 0),
-}));
+  )
+);
