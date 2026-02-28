@@ -1,12 +1,16 @@
 version: '3.9'
 
+# ==========================================
+# IntelliCore ML Ecommerce — Docker Compose v2
+# ==========================================
+
 services:
   # ==========================================
   # PostgreSQL — Primary Database
   # ==========================================
   postgres:
     image: postgres:15-alpine
-    container_name: ml_ecommerce_postgres
+    container_name: intellicore_postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: ecommerce
@@ -24,16 +28,16 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - ml_ecommerce_net
+      - intellicore_net
 
   # ==========================================
-  # Redis — Cache & Task Queue
+  # Redis — Cache & Session Store
   # ==========================================
   redis:
     image: redis:7-alpine
-    container_name: ml_ecommerce_redis
+    container_name: intellicore_redis
     restart: unless-stopped
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_pass}
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_pass} --maxmemory 256mb --maxmemory-policy allkeys-lru
     ports:
       - "6379:6379"
     volumes:
@@ -44,14 +48,14 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - ml_ecommerce_net
+      - intellicore_net
 
   # ==========================================
   # MongoDB — Event Logs & Analytics
   # ==========================================
   mongodb:
     image: mongo:7
-    container_name: ml_ecommerce_mongodb
+    container_name: intellicore_mongodb
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-mongo_user}
@@ -68,14 +72,14 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - ml_ecommerce_net
+      - intellicore_net
 
   # ==========================================
   # MLflow — Model Tracking & Registry
   # ==========================================
   mlflow:
     image: ghcr.io/mlflow/mlflow:v2.10.0
-    container_name: ml_ecommerce_mlflow
+    container_name: intellicore_mlflow
     restart: unless-stopped
     command: >
       mlflow server
@@ -93,7 +97,7 @@ services:
     environment:
       MLFLOW_TRACKING_URI: http://localhost:5000
     networks:
-      - ml_ecommerce_net
+      - intellicore_net
 
   # ==========================================
   # Backend — Node.js/Express API
@@ -102,7 +106,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: ml_ecommerce_backend
+    container_name: intellicore_backend
     restart: unless-stopped
     ports:
       - "4000:4000"
@@ -114,8 +118,17 @@ services:
       MONGODB_URI: mongodb://${MONGO_USER:-mongo_user}:${MONGO_PASS:-mongo_pass}@mongodb:27017/ecommerce_events?authSource=admin
       JWT_SECRET: ${JWT_SECRET:-super_secret_jwt_key_change_in_production}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-super_secret_refresh_key_change_in_production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
       ML_SERVICE_URL: http://ml-service:8001
-      FRONTEND_URL: http://localhost:3000
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_placeholder}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      EMAIL_FROM: ${EMAIL_FROM:-noreply@intellicore.shop}
     volumes:
       - ./backend:/app
       - /app/node_modules
@@ -127,7 +140,7 @@ services:
       mongodb:
         condition: service_healthy
     networks:
-      - ml_ecommerce_net
+      - intellicore_net
 
   # ==========================================
   # ML Service — FastAPI + Python
@@ -136,7 +149,7 @@ services:
     build:
       context: ./ml-service
       dockerfile: Dockerfile
-    container_name: ml_ecommerce_ml
+    container_name: intellicore_ml
     restart: unless-stopped
     ports:
       - "8001:8001"
@@ -148,6 +161,7 @@ services:
       MONGODB_URI: mongodb://${MONGO_USER:-mongo_user}:${MONGO_PASS:-mongo_pass}@mongodb:27017/ecommerce_events?authSource=admin
       MLFLOW_TRACKING_URI: http://mlflow:5000
       MODEL_DIR: /app/models
+      RETRAIN_INTERVAL_HOURS: ${RETRAIN_INTERVAL_HOURS:-24}
     volumes:
       - ./ml-service:/app
       - ml_models:/app/models
@@ -159,22 +173,25 @@ services:
       mlflow:
         condition: service_started
     networks:
-      - ml_ecommerce_net
+      - intellicore_net
 
   # ==========================================
-  # Frontend — Next.js
+  # Frontend — Next.js 14
   # ==========================================
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: ml_ecommerce_frontend
+    container_name: intellicore_frontend
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:4000
-      NEXT_PUBLIC_ML_URL: http://localhost:8001
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
+      NEXT_PUBLIC_ML_URL: ${NEXT_PUBLIC_ML_URL:-http://localhost:8001}
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-pk_test_placeholder}
+      NEXT_PUBLIC_APP_NAME: IntelliCore Shop
+      NEXT_PUBLIC_APP_URL: ${FRONTEND_URL:-http://localhost:3000}
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -182,14 +199,14 @@ services:
     depends_on:
       - backend
     networks:
-      - ml_ecommerce_net
+      - intellicore_net
 
   # ==========================================
   # Prometheus — Metrics Collection
   # ==========================================
   prometheus:
     image: prom/prometheus:latest
-    container_name: ml_ecommerce_prometheus
+    container_name: intellicore_prometheus
     restart: unless-stopped
     ports:
       - "9090:9090"
@@ -199,23 +216,27 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
     networks:
-      - ml_ecommerce_net
+      - intellicore_net
 
   # ==========================================
   # Grafana — Monitoring Dashboard
   # ==========================================
   grafana:
     image: grafana/grafana:latest
-    container_name: ml_ecommerce_grafana
+    container_name: intellicore_grafana
     restart: unless-stopped
     ports:
       - "3001:3000"
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS:-admin123}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-simple-json-datasource
     volumes:
       - grafanadata:/var/lib/grafana
       - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
@@ -223,7 +244,28 @@ services:
     depends_on:
       - prometheus
     networks:
-      - ml_ecommerce_net
+      - intellicore_net
+
+  # ==========================================
+  # Nginx — Reverse Proxy (Production)
+  # ==========================================
+  nginx:
+    image: nginx:alpine
+    container_name: intellicore_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - intellicore_net
+    profiles:
+      - production
 
 volumes:
   pgdata:
@@ -235,5 +277,8 @@ volumes:
   grafanadata:
 
 networks:
-  ml_ecommerce_net:
+  intellicore_net:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
