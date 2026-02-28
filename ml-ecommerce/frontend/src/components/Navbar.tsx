@@ -121,13 +121,14 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16 gap-4">
-            {/* Logo */}
+            {/* Logo — Stitch brand red */}
             <Link href="/" className="flex items-center gap-2 shrink-0 group">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center shadow-glow group-hover:shadow-glow-lg transition-shadow">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center shadow-glow-red group-hover:shadow-lg transition-shadow">
                 <Zap className="w-4 h-4 text-white" />
               </div>
               <span className="text-lg font-bold gradient-text hidden sm:block">IntelliCore</span>
             </Link>
+
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1">
@@ -182,6 +183,8 @@ export default function Navbar() {
               <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
+                  id="navbar-search-desktop"
+                  name="q"
                   type="text"
                   value={search}
                   onChange={e => setSearch(e.target.value)}
@@ -319,6 +322,8 @@ export default function Navbar() {
             <form onSubmit={handleSearch} className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
+                id="navbar-search-mobile"
+                name="q"
                 ref={searchRef}
                 type="text"
                 value={search}

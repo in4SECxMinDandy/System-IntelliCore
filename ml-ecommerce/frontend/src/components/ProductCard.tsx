@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Heart, ShoppingCart, Star, Eye, Share2, Zap, TrendingUp } from 'lucide-react';
 import { cn, formatPrice, calculateDiscount } from '@/lib/utils';
 import { useCartStore } from '@/store/cartStore';
@@ -43,6 +44,7 @@ export default function ProductCard({
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { addItem } = useCartStore();
+  const router = useRouter();
 
   const primaryImage = product.images?.find(img => img.isPrimary)?.url
     || product.images?.[0]?.url
@@ -229,13 +231,13 @@ export default function ProductCard({
           >
             <Share2 className="w-4 h-4" />
           </button>
-          <Link
-            href={`/products/${product.slug}`}
+          <button
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/products/${product.slug}`); }}
             className="w-8 h-8 rounded-full bg-white dark:bg-dark-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-dark-700 flex items-center justify-center shadow-md transition-colors"
             aria-label="Quick view"
           >
             <Eye className="w-4 h-4" />
-          </Link>
+          </button>
         </div>
 
         {/* Add to Cart Overlay */}

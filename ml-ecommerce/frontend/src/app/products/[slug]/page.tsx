@@ -28,8 +28,8 @@ function StarRating({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md
           className={cn(
             sizeClass,
             i < Math.floor(rating) ? 'text-yellow-400 fill-yellow-400' :
-            i === Math.floor(rating) && rating % 1 >= 0.5 ? 'text-yellow-400 fill-yellow-200' :
-            'text-gray-200 dark:text-dark-600'
+              i === Math.floor(rating) && rating % 1 >= 0.5 ? 'text-yellow-400 fill-yellow-200' :
+                'text-gray-200 dark:text-dark-600'
           )}
         />
       ))}
@@ -361,3 +361,17 @@ export default function ProductDetailPage() {
           <div className="grid grid-cols-3 gap-3 p-4 bg-gray-50 dark:bg-dark-800 rounded-xl">
             {[
               { icon: Truck, text: 'Free shipping over $50' },
+              { icon: Shield, text: '1-Year Warranty' },
+              { icon: RefreshCw, text: '30-Day Returns' },
+            ].map((Badge, i) => (
+              <div key={i} className="flex flex-col items-center justify-center p-3 text-center border border-gray-100 dark:border-dark-700 rounded-lg hover:border-primary-200 hover:bg-primary-50 dark:hover:border-primary-900/30 dark:hover:bg-primary-900/10 transition-colors">
+                <Badge.icon className="w-6 h-6 text-primary-500 mb-2" />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{Badge.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

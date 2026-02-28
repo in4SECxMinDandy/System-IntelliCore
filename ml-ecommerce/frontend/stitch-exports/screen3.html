@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Order Cancellation &amp; Returns Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#f27f0d",
+              "background-light": "#f8f7f5",
+              "background-dark": "#221910",
+              "surface-dark": "#2b2116",
+              "surface-light": "#ffffff",
+              "text-main": "#f8f7f5",
+              "text-muted": "#baab9c",
+              "border-color": "#393028",
+            },
+            fontFamily: {
+              "display": ["Space Grotesk", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        /* Custom checkbox style adjustment for the SVG data URI replacement */
+        .checkbox-custom:checked {
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23181411' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col overflow-x-hidden text-slate-900 dark:text-slate-100">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Header -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-border-color bg-surface-light dark:bg-background-dark px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-slate-900 dark:text-white">
+<div class="size-8 text-primary">
+<span class="material-symbols-outlined text-4xl">local_mall</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-2xl font-bold leading-tight tracking-[-0.015em]">ShopX</h2>
+</div>
+<div class="hidden md:flex items-center gap-9">
+<a class="text-slate-600 dark:text-text-muted hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Orders</a>
+<a class="text-primary text-sm font-medium leading-normal" href="#">Returns</a>
+<a class="text-slate-600 dark:text-text-muted hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Help</a>
+<a class="text-slate-600 dark:text-text-muted hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Profile</a>
+</div>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="hidden lg:flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full border border-slate-200 dark:border-border-color bg-slate-50 dark:bg-surface-dark overflow-hidden group focus-within:ring-2 focus-within:ring-primary/50">
+<div class="text-slate-400 dark:text-text-muted flex items-center justify-center pl-3">
+<span class="material-symbols-outlined" style="font-size: 20px;">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg bg-transparent border-none text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-text-muted px-3 text-sm font-normal focus:ring-0" placeholder="Search orders..." value=""/>
+</div>
+</label>
+<button class="relative flex items-center justify-center size-10 rounded-full hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors text-slate-900 dark:text-white">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="absolute top-1 right-1 size-2.5 bg-primary rounded-full border-2 border-white dark:border-background-dark"></span>
+</button>
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10 ring-2 ring-slate-200 dark:ring-border-color" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD7iKqg8h9qe5WE_XXuAigDVhgsGZOHCFEIfzsQnzhKvwd9T6m-OoBVlC4V3589qkyT9XepdUTr6nBPL_ywHgl1KdErtlMvTw0f7167poAdWsojB2AyxgLdf8q2oaWstlXhSSCIvZkSwH4eUPusmzuMVFtq87BxgrNXHF6a6J5M0UIJ7RUMvgcyswNFmxjTvikJxjdc_mOAJm5mYf4ih3OjHtbiiCd4GUbxMvOeuvjv2uycAZia4rGeC41SzLn2PVvGIOd3_OQRnGg");'></div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex flex-1 justify-center py-10 px-4 md:px-10">
+<div class="layout-content-container flex flex-col max-w-[960px] flex-1 w-full gap-8">
+<!-- Page Title Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-slate-200 dark:border-border-color pb-6">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2 text-primary mb-1">
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+<span class="text-sm font-medium uppercase tracking-wider">Back to Orders</span>
+</div>
+<h1 class="text-slate-900 dark:text-white text-4xl md:text-5xl font-bold leading-tight tracking-[-0.033em]">Cancel Order &amp; Returns</h1>
+<p class="text-slate-500 dark:text-text-muted text-lg font-normal">Order #123456789 • Placed on Oct 24, 2023</p>
+</div>
+<div class="px-4 py-2 bg-green-500/10 dark:bg-green-900/20 border border-green-500/20 rounded-lg flex items-center gap-2 text-green-700 dark:text-green-400">
+<span class="material-symbols-outlined text-sm fill-current">verified</span>
+<span class="text-sm font-bold">Eligible for Return until Nov 24</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left Column: Items Selection -->
+<div class="lg:col-span-2 flex flex-col gap-8">
+<!-- AI Policy Check Card -->
+<div class="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-[#2e243d] dark:to-[#1e1a24] p-6 rounded-xl border border-indigo-100 dark:border-indigo-500/20 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-9xl">smart_toy</span>
+</div>
+<div class="relative z-10 flex flex-col gap-3">
+<div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="text-sm font-bold uppercase tracking-wide">AI Policy Check</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Good news! You're eligible for a full refund.</h3>
+<p class="text-slate-600 dark:text-indigo-200/80 text-sm leading-relaxed max-w-lg">Based on your order status and return history, this request qualifies for an instant approval. No restocking fees apply if returned within 30 days.</p>
+</div>
+</div>
+<!-- Select Items Section -->
+<section class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-color p-6 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-slate-900 dark:text-white text-2xl font-bold">Select Items to Return</h2>
+<button class="text-primary text-sm font-medium hover:underline">Select All</button>
+</div>
+<div class="flex flex-col gap-4">
+<!-- Item 1 -->
+<label class="flex items-start gap-4 p-4 rounded-lg border border-slate-100 dark:border-border-color bg-slate-50/50 dark:bg-[#2b2116]/50 hover:bg-slate-50 dark:hover:bg-[#342a20] transition-colors cursor-pointer group">
+<div class="pt-1">
+<input checked="" class="checkbox-custom h-5 w-5 rounded border-slate-300 dark:border-[#54473b] border-2 bg-transparent text-primary focus:ring-0 focus:ring-offset-0 focus:border-primary focus:outline-none" type="checkbox"/>
+</div>
+<div class="h-20 w-20 rounded-lg bg-slate-200 dark:bg-border-color shrink-0 overflow-hidden">
+<img alt="Headphones" class="h-full w-full object-cover" data-alt="Headphones product shot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY2L0948Xkb5PY-ZtVija1bwB9e90Jg1VxVIDuPGAJIEkqWsaL5fskTMRyJvNuufVmvV4BFkQwJiUmxSTwQ9F-Wzfbddb-JYnbIUNrF2e9sVYW9c3vJ29flbX8r5sewvHnPZ3TSjiAt7z-43yXKF_K-Q4539TImr5wk6NaQ765rHD-r_umDZbKyWHb8oqETFcoDWZW4qIRc_Eu8FnITxFgD32iceU8QI9300texksB7-UcT2Hfq4Xg0kIm3a8IAB6WClZ2x63G8dI"/>
+</div>
+<div class="flex flex-col grow gap-1">
+<div class="flex justify-between items-start w-full">
+<p class="text-slate-900 dark:text-white text-base font-semibold leading-tight">Wireless Noise Cancelling Headphones</p>
+<span class="text-slate-900 dark:text-white font-bold">$299.00</span>
+</div>
+<p class="text-slate-500 dark:text-text-muted text-sm">Color: Black • Qty: 1</p>
+<div class="mt-2 text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+                                            Returnable
+                                        </div>
+</div>
+</label>
+<!-- Item 2 -->
+<label class="flex items-start gap-4 p-4 rounded-lg border border-slate-100 dark:border-border-color bg-slate-50/50 dark:bg-[#2b2116]/50 hover:bg-slate-50 dark:hover:bg-[#342a20] transition-colors cursor-pointer group">
+<div class="pt-1">
+<input class="checkbox-custom h-5 w-5 rounded border-slate-300 dark:border-[#54473b] border-2 bg-transparent text-primary focus:ring-0 focus:ring-offset-0 focus:border-primary focus:outline-none" type="checkbox"/>
+</div>
+<div class="h-20 w-20 rounded-lg bg-slate-200 dark:bg-border-color shrink-0 overflow-hidden">
+<img alt="Smart Watch" class="h-full w-full object-cover" data-alt="Smartwatch product shot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNdbaTsXpdS3lqlPTuP5llbhEzxxOMlvSVFAduYCWnpSzRmnlX-5p6B_DReH8NZfo2EotOoDNizk2oQSn6s7ohlqEPPw_exxrKODO3kx1-mQv9i_2bAAtPUM2DuTAthYaqKqG2X9N-VrwJRn1jLDJHAfn1NMEf7g9I5Ae5cnB8PxpHb0geOf5Dh_nhLxrGe4S6XIC1o96QiI5-8qyjR1xeXQ-HQEL0QEVFEI14tlUmfrNdbAxzG2JntCnpOYcWT0kZTZx4LG04qKU"/>
+</div>
+<div class="flex flex-col grow gap-1">
+<div class="flex justify-between items-start w-full">
+<p class="text-slate-900 dark:text-white text-base font-semibold leading-tight">Smart Watch Series 7</p>
+<span class="text-slate-900 dark:text-white font-bold">$399.00</span>
+</div>
+<p class="text-slate-500 dark:text-text-muted text-sm">Size: 44mm • Color: Midnight</p>
+</div>
+</label>
+<!-- Item 3 -->
+<label class="flex items-start gap-4 p-4 rounded-lg border border-slate-100 dark:border-border-color bg-slate-50/50 dark:bg-[#2b2116]/50 hover:bg-slate-50 dark:hover:bg-[#342a20] transition-colors cursor-pointer group">
+<div class="pt-1">
+<input class="checkbox-custom h-5 w-5 rounded border-slate-300 dark:border-[#54473b] border-2 bg-transparent text-primary focus:ring-0 focus:ring-offset-0 focus:border-primary focus:outline-none" type="checkbox"/>
+</div>
+<div class="h-20 w-20 rounded-lg bg-slate-200 dark:bg-border-color shrink-0 overflow-hidden flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-3xl">cable</span>
+</div>
+<div class="flex flex-col grow gap-1">
+<div class="flex justify-between items-start w-full">
+<p class="text-slate-900 dark:text-white text-base font-semibold leading-tight">USB-C Fast Charging Cable</p>
+<span class="text-slate-900 dark:text-white font-bold">$19.00</span>
+</div>
+<p class="text-slate-500 dark:text-text-muted text-sm">Length: 2m</p>
+</div>
+</label>
+</div>
+</section>
+</div>
+<!-- Right Column: Reason & Summary -->
+<div class="flex flex-col gap-6">
+<!-- Reason Card -->
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-color p-6 shadow-sm sticky top-24">
+<h2 class="text-slate-900 dark:text-white text-xl font-bold mb-4">Reason for Return</h2>
+<div class="flex flex-col gap-4">
+<div class="relative">
+<label class="text-xs font-bold text-slate-500 dark:text-text-muted uppercase tracking-wider mb-2 block">Reason Code</label>
+<select class="w-full bg-slate-50 dark:bg-[#1f1a14] border border-slate-300 dark:border-[#393028] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-3 pr-10 appearance-none">
+<option>Defective or Damaged</option>
+<option>Wrong Item Sent</option>
+<option>Better Price Available</option>
+<option>No Longer Needed</option>
+<option>Item arrived too late</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 pt-6 text-slate-500">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+<div>
+<label class="text-xs font-bold text-slate-500 dark:text-text-muted uppercase tracking-wider mb-2 block">Additional Comments</label>
+<textarea class="w-full bg-slate-50 dark:bg-[#1f1a14] border border-slate-300 dark:border-[#393028] text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block p-3 h-32 resize-none" placeholder="Please provide more details..."></textarea>
+</div>
+<div class="h-px bg-slate-200 dark:bg-border-color my-2"></div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500 dark:text-text-muted">Refund Method</span>
+<span class="text-slate-900 dark:text-white font-medium">Original Payment</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500 dark:text-text-muted">Estimated Refund</span>
+<span class="text-primary font-bold text-lg">$299.00</span>
+</div>
+<button class="w-full bg-primary hover:bg-orange-600 text-white dark:text-background-dark font-bold py-4 px-6 rounded-lg shadow-lg shadow-primary/20 transition-all mt-2 flex items-center justify-center gap-2 text-base tracking-wide">
+<span>Request Refund</span>
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+<p class="text-center text-xs text-slate-400 dark:text-stone-500 mt-2">
+                                    By continuing, you agree to our <a class="underline hover:text-slate-600 dark:hover:text-stone-400" href="#">Return Policy</a>.
+                                </p>
+</div>
+</div>
+<!-- Help Card -->
+<div class="bg-blue-50 dark:bg-blue-900/10 rounded-xl p-5 border border-blue-100 dark:border-blue-900/20">
+<div class="flex gap-3">
+<div class="bg-blue-100 dark:bg-blue-900/30 rounded-full p-2 h-fit text-blue-600 dark:text-blue-400">
+<span class="material-symbols-outlined">headset_mic</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Need help with this return?</h4>
+<p class="text-xs text-slate-600 dark:text-blue-200/70 mb-3">Our support team is available 24/7 to assist you with any questions.</p>
+<a class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline" href="#">Contact Support</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

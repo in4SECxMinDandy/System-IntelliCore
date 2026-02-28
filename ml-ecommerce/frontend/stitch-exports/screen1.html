@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Customer Order History &amp; Status</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#f27f0d",
+                        "primary-dark": "#d16b08",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#181411",
+                        "card-dark": "#221910",
+                        "border-dark": "#393028",
+                        "text-light": "#baab9c",
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"],
+                    },
+                    boxShadow: {
+                        'neon': '0 0 5px theme("colors.primary"), 0 0 10px theme("colors.primary")',
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-dark px-10 py-3 bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-white">
+<div class="size-8 text-primary">
+<span class="material-symbols-outlined text-4xl">view_in_ar</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">ML Market</h2>
+</div>
+<div class="hidden md:flex items-center gap-9">
+<a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Shop</a>
+<a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Deals</a>
+<a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="hidden lg:flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-card-dark border border-border-dark focus-within:border-primary transition-colors">
+<div class="text-text-light flex items-center justify-center pl-4">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="w-full bg-transparent border-none text-white focus:ring-0 placeholder:text-text-light px-4 text-sm font-normal" placeholder="Search products..."/>
+</div>
+</label>
+<div class="flex gap-3">
+<button class="flex items-center justify-center rounded-lg size-10 bg-card-dark hover:bg-border-dark text-white transition-colors relative">
+<span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+<span class="absolute top-2 right-2 size-2 rounded-full bg-primary"></span>
+</button>
+<button class="flex items-center justify-center rounded-lg size-10 bg-card-dark hover:bg-border-dark text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<div class="size-10 rounded-full bg-cover bg-center border-2 border-primary" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB62muIiUcro64wN3fRUdO1c7vCKbYlML21GKFAXu4gRRAVs7wKvKPLvonCdOniM0UQQl0S40KyHrY-IYgkTBFATIZzVlD4WwllWPuRVQhjIplC-c7ih75JNdPllfxWaDVR1g4pK5Ao-RwsxVShhfVlEVVoGJlRAUR3c4-PqYON_JTZSK4fBb50OxWwcWO9WAVAfDyVPSdB27ZfCmYHxCTi-HyxLcsgXtIqd9NdNT3XHgK8HavBXmI2yqPYqIUgFXYGEoaZz93wEJE");'></div>
+</div>
+</div>
+</header>
+<!-- Main Layout -->
+<div class="flex flex-1 w-full max-w-[1440px] mx-auto p-6 gap-8">
+<!-- Sidebar Navigation -->
+<aside class="hidden lg:flex w-64 flex-col gap-6 shrink-0">
+<!-- Account Menu -->
+<div class="bg-card-dark rounded-xl p-5 border border-border-dark">
+<div class="flex items-center gap-3 mb-6">
+<div class="size-12 rounded-full bg-cover bg-center" data-alt="User profile avatar small" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAemMbdC_W82xZO_vMp4RDOd2Mw99iMw8BVmZZP7K5Fkltafiuo_kC9N1qlBKvJIqP5B6t2a1WOLjwP35Q6uvBEwTO_tbNdxDgB63dmO0bYCgE1ucwAXdlkZa3IXPNp5-SRqiRBhCp5xIHNvaJdFi5HHpLz33EHkmuSaZ-0KR94PZSZbtog8RQZyRZNvOTf2yXRPVV6hXAJZmxE-mIFwr6PQ8T8zfFlUoCGs4lZH9-VxDQVS9ZiHow__SzYUibfRugO4WUey9TieIM");'></div>
+<div>
+<h3 class="text-white font-bold">Jane Doe</h3>
+<p class="text-xs text-text-light">Platinum Member</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-light hover:bg-border-dark hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-sm font-medium">My Profile</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="text-sm font-bold">My Orders</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-light hover:bg-border-dark hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<span class="text-sm font-medium">Wishlist</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-light hover:bg-border-dark hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-sm font-medium">Payment Methods</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-light hover:bg-border-dark hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">location_on</span>
+<span class="text-sm font-medium">Address Book</span>
+</a>
+</nav>
+</div>
+<!-- Recommended Sidebar Widget -->
+<div class="bg-card-dark rounded-xl p-5 border border-border-dark">
+<div class="flex items-center gap-2 mb-4 text-primary">
+<span class="material-symbols-outlined fill-current">auto_awesome</span>
+<h3 class="text-sm font-bold text-white uppercase tracking-wider">Recommended</h3>
+</div>
+<div class="flex flex-col gap-4">
+<a class="group flex gap-3 items-start" href="#">
+<div class="w-16 h-16 rounded-lg bg-cover bg-center shrink-0 border border-border-dark group-hover:border-primary transition-colors" data-alt="Red Nike sneaker" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAmjQm00q8RSexE5TcKS01ixO6NJhJM-UaXF_gJm91a6walPXmH5dLlothE6a-pYehAPxdJel7ht0LefkBfIVSnS4n-LK2eHzCVFWo9gwefM7uSE1hrpdhpKgJrMp5-97sp_wYJyFn3vpjS7pmIwaqJmaqN5i6iVfZ01sd6-MEDM4_CMQlmlCJdfDRYlHB7wNo9iJWeFXJV7ddhRY6zutSJgDNhtjguovukMF8LDqVW7CjMsAKV_y3j_J4jCD-sR-Yhhnbv6YbCKt0");'></div>
+<div>
+<p class="text-white text-sm font-medium line-clamp-2 group-hover:text-primary transition-colors">Nike Air Max 270 React Eng</p>
+<p class="text-primary font-bold text-sm mt-1">$299.00</p>
+</div>
+</a>
+<a class="group flex gap-3 items-start" href="#">
+<div class="w-16 h-16 rounded-lg bg-cover bg-center shrink-0 border border-border-dark group-hover:border-primary transition-colors" data-alt="White smartwatch" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBjwfNCYvHCZenN1yMYSCowkyMFK3Ixv0vuZPoXw_Vy6-KKZBTE3CjEPQZOEM4vWVUjRJJa_T2q2bp66cZke9sB33ouX-HkzrGUOvTuqoFjC3KsLjzTYEgF7ZrvgROKrFGD5yLJELpLPOPOMB9JRlm-qVUXPM6GVDw0ULZX3J6bpUaoUJbsJtUU_9VzBNif-DoCE_HWnZMrlnhmdsmxf2mH2AVNyLUeyiH2vWGh4CH6RjAFLsNtQ-P2Fu7mElH54NCJWOtwdZeSw_g");'></div>
+<div>
+<p class="text-white text-sm font-medium line-clamp-2 group-hover:text-primary transition-colors">Apple Watch Series 6 GPS</p>
+<p class="text-primary font-bold text-sm mt-1">$399.00</p>
+</div>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col gap-6">
+<!-- Breadcrumb & Header -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2 text-text-light text-sm">
+<a class="hover:text-white" href="#">Home</a>
+<span>/</span>
+<a class="hover:text-white" href="#">Account</a>
+<span>/</span>
+<span class="text-primary">My Orders</span>
+</div>
+<h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">My Orders</h1>
+<p class="text-text-light">Track, return, or buy things again.</p>
+</div>
+<!-- Order Status Tabs -->
+<div class="w-full overflow-x-auto border-b border-border-dark">
+<div class="flex min-w-max gap-8">
+<button class="pb-3 border-b-2 border-transparent text-text-light hover:text-white font-medium text-sm transition-colors">All</button>
+<button class="pb-3 border-b-2 border-transparent text-text-light hover:text-white font-medium text-sm transition-colors">To Pay</button>
+<button class="pb-3 border-b-2 border-transparent text-text-light hover:text-white font-medium text-sm transition-colors">To Ship</button>
+<button class="pb-3 border-b-2 border-primary text-primary font-bold text-sm shadow-[0_1px_0_0_#f27f0d]">To Receive (2)</button>
+<button class="pb-3 border-b-2 border-transparent text-text-light hover:text-white font-medium text-sm transition-colors">Completed</button>
+</div>
+</div>
+<!-- Order List -->
+<div class="flex flex-col gap-6">
+<!-- Order Card 1: Active/Neon -->
+<div class="bg-card-dark rounded-xl border border-primary/50 shadow-[0_0_15px_-3px_rgba(242,127,13,0.15)] overflow-hidden">
+<!-- Card Header -->
+<div class="flex flex-wrap items-center justify-between p-4 bg-background-dark/50 border-b border-border-dark gap-4">
+<div class="flex items-center gap-4">
+<span class="bg-primary/20 text-primary px-3 py-1 rounded text-xs font-bold uppercase tracking-wider border border-primary/30">Out for Delivery</span>
+<span class="text-text-light text-sm">Order #ML-883921</span>
+<span class="text-text-light text-sm hidden sm:block">•</span>
+<span class="text-text-light text-sm hidden sm:block">Placed on Oct 24, 2023</span>
+</div>
+<div class="flex items-center gap-2 text-primary font-medium text-sm">
+<span class="material-symbols-outlined text-lg animate-pulse">local_shipping</span>
+<span>AI Est: Arriving Today by 8 PM</span>
+</div>
+</div>
+<!-- Card Body -->
+<div class="p-4 sm:p-6 flex flex-col md:flex-row gap-6">
+<div class="flex gap-4 flex-1">
+<div class="size-24 sm:size-32 rounded-lg bg-background-dark border border-border-dark shrink-0 overflow-hidden relative">
+<img alt="Mechanical Keyboard" class="w-full h-full object-cover" data-alt="High tech mechanical keyboard with RGB lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ_PU8WIAXOKrkijveyvTQoy9Y2xOdxtEjq_Dev7tX-c8zIdHNeBTKOqdtwo4CitAiCknE-OIKIgus00ok3Xm-_fnIE2z8onEylXFmET6he9YfvlKglTQoTVAFGneh46m3zgvuw2ADHzDsNtL706wv2BodE06OBenJTqBViCLxf2Yk2bQS-v7jWdtWIZG5ruzh96qkjpH4qd3LjAOv26j5GsWKqg3l-_Rx2LweCRaR48wHgKGRzzTvsVZ86grTxgRnUNWQC_p4pdU"/>
+</div>
+<div class="flex flex-col justify-between">
+<div>
+<h4 class="text-white font-bold text-lg mb-1">CyberMech Pro Keyboard</h4>
+<p class="text-text-light text-sm">Variant: TKL, Brown Switches</p>
+<p class="text-text-light text-sm">Qty: 1</p>
+</div>
+<div class="mt-2">
+<span class="text-xl font-bold text-white">$149.99</span>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col justify-center gap-3 md:w-48 shrink-0">
+<button class="w-full py-2.5 px-4 bg-primary hover:bg-primary-dark text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-lg">map</span>
+                                Track Order
+                            </button>
+<button class="w-full py-2.5 px-4 bg-transparent border border-border-dark hover:border-text-light text-white font-medium rounded-lg transition-colors">
+                                View Details
+                            </button>
+</div>
+</div>
+</div>
+<!-- Order Card 2: Active/Standard -->
+<div class="bg-card-dark rounded-xl border border-border-dark overflow-hidden hover:border-primary/30 transition-colors">
+<div class="flex flex-wrap items-center justify-between p-4 bg-background-dark/50 border-b border-border-dark gap-4">
+<div class="flex items-center gap-4">
+<span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded text-xs font-bold uppercase tracking-wider border border-blue-500/30">Shipped</span>
+<span class="text-text-light text-sm">Order #ML-883920</span>
+<span class="text-text-light text-sm hidden sm:block">•</span>
+<span class="text-text-light text-sm hidden sm:block">Placed on Oct 22, 2023</span>
+</div>
+<div class="flex items-center gap-2 text-text-light font-medium text-sm">
+<span class="material-symbols-outlined text-lg">calendar_clock</span>
+<span>AI Est: Oct 28 - Oct 30</span>
+</div>
+</div>
+<div class="p-4 sm:p-6 flex flex-col md:flex-row gap-6">
+<div class="flex gap-4 flex-1">
+<div class="size-24 sm:size-32 rounded-lg bg-background-dark border border-border-dark shrink-0 overflow-hidden">
+<img alt="Wireless Gaming Mouse" class="w-full h-full object-cover" data-alt="Sleek black wireless gaming mouse" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYQkZln_r0w_QkpufOP4Gpe8hGnkdhGtR5A2MK5JN9WQS3B7itETOx0iTmtAQMj8uRhdWg6eprNFaVfraVfosTp2DPNnJ4w3r5LP8llKN-NsKhZWy8LazSYqAMKPNH3br03gxFF0-HxIp8lsogWuEorppyQYiyJSP200d-icBLKjJPjPIz1_vlcp3bygRsveV339pYL9gLEMZ-1WQmTt_BBxA5glAu1woq7194MPNFa_gdkJ2oGxxKbKPO37XyG-4dVU-F-g6XpxA"/>
+</div>
+<div class="flex flex-col justify-between">
+<div>
+<h4 class="text-white font-bold text-lg mb-1">Viper Ultimate Wireless</h4>
+<p class="text-text-light text-sm">Color: Black</p>
+<p class="text-text-light text-sm">Qty: 1</p>
+</div>
+<div class="mt-2">
+<span class="text-xl font-bold text-white">$89.99</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col justify-center gap-3 md:w-48 shrink-0">
+<button class="w-full py-2.5 px-4 bg-primary hover:bg-primary-dark text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">local_shipping</span>
+                                Track Order
+                            </button>
+<button class="w-full py-2.5 px-4 bg-transparent border border-border-dark hover:border-text-light text-white font-medium rounded-lg transition-colors">
+                                View Details
+                            </button>
+</div>
+</div>
+</div>
+<!-- Order Card 3: Completed -->
+<div class="bg-card-dark rounded-xl border border-border-dark overflow-hidden opacity-80 hover:opacity-100 transition-opacity">
+<div class="flex flex-wrap items-center justify-between p-4 bg-background-dark/50 border-b border-border-dark gap-4">
+<div class="flex items-center gap-4">
+<span class="bg-green-500/20 text-green-400 px-3 py-1 rounded text-xs font-bold uppercase tracking-wider border border-green-500/30">Completed</span>
+<span class="text-text-light text-sm">Order #ML-883855</span>
+<span class="text-text-light text-sm hidden sm:block">•</span>
+<span class="text-text-light text-sm hidden sm:block">Delivered Oct 15, 2023</span>
+</div>
+</div>
+<div class="p-4 sm:p-6 flex flex-col md:flex-row gap-6">
+<div class="flex gap-4 flex-1">
+<div class="size-24 sm:size-32 rounded-lg bg-background-dark border border-border-dark shrink-0 overflow-hidden grayscale hover:grayscale-0 transition-all">
+<img alt="Smart Watch" class="w-full h-full object-cover" data-alt="Modern smartwatch on a wrist" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDK3OoVhw60PH673kCdEMSMBknIc1bGHhNC2glXDDVxSp7DL2D61Vy_6dNBulWOcjUmxEVo5kSlQbcSvX_XqlBHXeBPZpkT19cCFQ5LlLSjjTw1ScMMcNBr_mg1016V5tTWnsE4DrBOHKgNqq8xbH1brFs8DbryLeGM4vnqCsXR_xpQZB3DPy3yFwESU-Ox2rRK9cfAwTHYXFaqamOPbVE5FpoyFtgrt0iO6M7AB_qytifqt4dnSVSHSRkcf1FdcqTQxrGTWmUak3A"/>
+</div>
+<div class="flex flex-col justify-between">
+<div>
+<h4 class="text-white font-bold text-lg mb-1">Galaxy Watch 5 Pro</h4>
+<p class="text-text-light text-sm">Color: Titanium Gray</p>
+<p class="text-text-light text-sm">Qty: 1</p>
+</div>
+<div class="mt-2">
+<span class="text-xl font-bold text-white">$449.00</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col justify-center gap-3 md:w-48 shrink-0">
+<button class="w-full py-2.5 px-4 bg-background-dark border border-primary text-primary hover:bg-primary hover:text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">shopping_cart</span>
+                                Buy Again
+                            </button>
+<button class="w-full py-2.5 px-4 bg-transparent border border-border-dark hover:border-text-light text-white font-medium rounded-lg transition-colors">
+                                Return Item
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination/Loader -->
+<div class="flex justify-center py-8">
+<button class="text-text-light hover:text-primary text-sm font-medium flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined">expand_more</span>
+                    Load more orders
+                </button>
+</div>
+</main>
+</div>
+</body></html>

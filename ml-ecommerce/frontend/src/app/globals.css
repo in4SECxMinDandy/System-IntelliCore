@@ -1,86 +1,102 @@
+/* Fonts: Spline Sans loaded via next/font/google in layout.tsx */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
 /* ==========================================
-   CSS Custom Properties — Design Tokens
+   CSS Custom Properties — Stitch Design Tokens
    ========================================== */
 @layer base {
   :root {
-    /* Light mode colors */
+    /* Stitch Light Mode */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 220 14% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 14% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --popover-foreground: 220 14% 10%;
+
+    /* Stitch primary: Red #ea2a33 → HSL(357, 82%, 53%) */
+    --primary: 357 82% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary / surface */
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 14% 20%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 8% 46%;
+    --accent: 16 100% 96%;
+    --accent-foreground: 16 80% 30%;
+
+    /* Semantic */
+    --destructive: 357 82% 53%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 357 82% 53%;
+
+    /* Stitch roundness: 8px */
     --radius: 0.5rem;
 
-    /* Surface colors */
-    --surface-1: 0 0% 100%;
-    --surface-2: 210 40% 98%;
-    --surface-3: 210 40% 96%;
+    /* Surface tokens */
+    --surface-0: 0 0% 100%;
+    --surface-1: 220 14% 98%;
+    --surface-2: 220 14% 96%;
+    --surface-3: 220 13% 91%;
 
     /* Semantic colors */
-    --success: 142.1 76.2% 36.3%;
-    --warning: 37.7 92.1% 50.2%;
-    --error: 0 84.2% 60.2%;
-    --info: 221.2 83.2% 53.3%;
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
+    --error: 357 82% 53%;
+    --info: 214 89% 52%;
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    /* Stitch shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 48px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.06);
+
+    /* Toast */
+    --toast-bg: #ffffff;
+    --toast-color: #111827;
+    --toast-border: #e5e7eb;
   }
 
   .dark {
-    /* Dark mode colors */
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-
-    /* Surface colors */
-    --surface-1: 222.2 84% 4.9%;
-    --surface-2: 217.2 32.6% 10%;
-    --surface-3: 217.2 32.6% 15%;
-
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+    --background: 220 27% 6%;
+    --foreground: 220 14% 96%;
+    --card: 220 27% 8%;
+    --card-foreground: 220 14% 96%;
+    --popover: 220 27% 8%;
+    --popover-foreground: 220 14% 96%;
+    --primary: 357 82% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 20% 14%;
+    --secondary-foreground: 220 14% 80%;
+    --muted: 220 20% 14%;
+    --muted-foreground: 220 10% 55%;
+    --accent: 220 20% 14%;
+    --accent-foreground: 220 14% 80%;
+    --destructive: 357 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 20% 16%;
+    --input: 220 20% 16%;
+    --ring: 357 82% 58%;
+    --surface-0: 220 27% 6%;
+    --surface-1: 220 27% 8%;
+    --surface-2: 220 20% 12%;
+    --surface-3: 220 20% 16%;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35), 0 2px 4px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.40), 0 2px 8px rgba(0, 0, 0, 0.25);
+    --shadow-xl: 0 20px 48px rgba(0, 0, 0, 0.45), 0 8px 16px rgba(0, 0, 0, 0.3);
+    --toast-bg: #1e293b;
+    --toast-color: #f1f5f9;
+    --toast-border: #334155;
   }
 }
 
@@ -89,7 +105,7 @@
    ========================================== */
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border box-border;
   }
 
   html {
@@ -100,28 +116,51 @@
   body {
     @apply bg-white dark:bg-dark-950 text-gray-900 dark:text-gray-100;
     @apply antialiased;
+    font-family: 'Spline Sans', 'Inter', system-ui, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-semibold tracking-tight;
   }
 
-  h1 { @apply text-4xl; }
-  h2 { @apply text-3xl; }
-  h3 { @apply text-2xl; }
-  h4 { @apply text-xl; }
-  h5 { @apply text-lg; }
-  h6 { @apply text-base; }
+  h1 {
+    @apply text-4xl;
+  }
+
+  h2 {
+    @apply text-3xl;
+  }
+
+  h3 {
+    @apply text-2xl;
+  }
+
+  h4 {
+    @apply text-xl;
+  }
+
+  h5 {
+    @apply text-lg;
+  }
+
+  h6 {
+    @apply text-base;
+  }
 
   a {
     @apply transition-colors duration-200;
   }
 
-  /* Custom scrollbar */
+  /* Stitch scrollbar */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
 
   ::-webkit-scrollbar-track {
@@ -133,133 +172,189 @@
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400 dark:bg-dark-500;
+    @apply bg-primary-400 dark:bg-primary-600;
   }
 
-  /* Focus styles */
+  /* Focus styles — Stitch uses red ring */
   :focus-visible {
     @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-white dark:ring-offset-dark-950;
   }
 
   /* Selection */
   ::selection {
-    @apply bg-primary-100 dark:bg-primary-900 text-primary-900 dark:text-primary-100;
+    @apply bg-primary-100 dark:bg-primary-900/40 text-primary-900 dark:text-primary-100;
   }
 }
 
 /* ==========================================
-   Component Utilities
+   Stitch Component Utilities
    ========================================== */
 @layer components {
-  /* Card */
+
+  /* ── Cards ── */
   .card {
     @apply bg-white dark:bg-dark-800 rounded-xl border border-gray-100 dark:border-dark-700;
-    @apply shadow-card transition-shadow duration-200;
+    box-shadow: var(--shadow);
+    @apply transition-shadow duration-200;
   }
 
   .card-hover {
-    @apply hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200;
+    @apply hover:-translate-y-0.5 transition-all duration-200;
+
+    &:hover {
+      box-shadow: var(--shadow-lg);
+    }
   }
 
-  /* Button variants */
+  /* ── Buttons — Stitch style ── */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg font-medium;
-    @apply transition-all duration-200 focus-visible:outline-none focus-visible:ring-2;
+    @apply inline-flex items-center justify-center gap-2;
+    @apply font-medium tracking-wide cursor-pointer select-none;
+    @apply transition-all duration-200 rounded-lg;
+    @apply focus-visible:outline-none focus-visible:ring-2;
     @apply focus-visible:ring-primary-500 focus-visible:ring-offset-2;
     @apply disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
+  /* Primary — Stitch red fill */
   .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800;
-    @apply shadow-sm hover:shadow-md;
+    @apply btn bg-primary-600 text-white;
+    @apply hover:bg-primary-700 active:bg-primary-800;
+    box-shadow: 0 1px 3px rgba(234, 42, 51, 0.3);
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(234, 42, 51, 0.35);
+    }
   }
 
+  /* Secondary */
   .btn-secondary {
     @apply btn bg-gray-100 dark:bg-dark-700 text-gray-900 dark:text-gray-100;
     @apply hover:bg-gray-200 dark:hover:bg-dark-600;
   }
 
+  /* Outline */
   .btn-outline {
     @apply btn border border-gray-200 dark:border-dark-600 bg-transparent;
     @apply text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-dark-800;
   }
 
+  /* Ghost */
   .btn-ghost {
     @apply btn bg-transparent text-gray-600 dark:text-gray-400;
     @apply hover:bg-gray-100 dark:hover:bg-dark-800 hover:text-gray-900 dark:hover:text-gray-100;
   }
 
+  /* Danger */
   .btn-danger {
     @apply btn bg-red-600 text-white hover:bg-red-700 active:bg-red-800;
   }
 
-  .btn-sm { @apply px-3 py-1.5 text-sm; }
-  .btn-md { @apply px-4 py-2 text-sm; }
-  .btn-lg { @apply px-6 py-3 text-base; }
-  .btn-xl { @apply px-8 py-4 text-lg; }
+  /* Success */
+  .btn-success {
+    @apply btn bg-green-600 text-white hover:bg-green-700 active:bg-green-800;
+  }
 
-  /* Input */
+  /* Sizes */
+  .btn-xs {
+    @apply px-2.5 py-1.5 text-xs;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
+  }
+
+  .btn-md {
+    @apply px-4 py-2 text-sm;
+  }
+
+  .btn-lg {
+    @apply px-6 py-3 text-base;
+  }
+
+  .btn-xl {
+    @apply px-8 py-4 text-lg;
+  }
+
+  /* Icon button */
+  .btn-icon {
+    @apply btn p-2 rounded-lg;
+  }
+
+  /* ── Inputs ── */
   .input {
     @apply w-full rounded-lg border border-gray-200 dark:border-dark-600;
     @apply bg-white dark:bg-dark-800 text-gray-900 dark:text-gray-100;
-    @apply px-3 py-2 text-sm placeholder:text-gray-400 dark:placeholder:text-gray-500;
-    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply px-3.5 py-2.5 text-sm placeholder:text-gray-400 dark:placeholder:text-gray-500;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400;
     @apply transition-all duration-200;
   }
 
-  /* Badge */
+  .input-sm {
+    @apply px-3 py-1.5 text-xs;
+  }
+
+  .input-lg {
+    @apply px-4 py-3 text-base;
+  }
+
+  /* ── Select ── */
+  .select {
+    @apply input appearance-none cursor-pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    @apply pr-10;
+  }
+
+  /* ── Badges ── */
   .badge {
     @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
 
   .badge-primary {
-    @apply badge bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300;
+    @apply badge bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300;
   }
 
   .badge-success {
-    @apply badge bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300;
+    @apply badge bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400;
   }
 
   .badge-warning {
-    @apply badge bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300;
+    @apply badge bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400;
   }
 
   .badge-danger {
-    @apply badge bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300;
+    @apply badge bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400;
+  }
+
+  .badge-info {
+    @apply badge bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400;
   }
 
   .badge-gray {
     @apply badge bg-gray-100 dark:bg-dark-700 text-gray-600 dark:text-gray-400;
   }
 
-  /* Skeleton loader */
+  /* ── Skeleton ── */
   .skeleton {
-    @apply animate-pulse bg-gray-200 dark:bg-dark-700 rounded;
+    @apply animate-pulse bg-gray-100 dark:bg-dark-700 rounded-lg;
   }
 
-  /* Shimmer effect */
+  /* ── Shimmer ── */
   .shimmer {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.4) 50%,
-      transparent 100%
-    );
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
     background-size: 200% 100%;
     @apply animate-shimmer;
   }
 
   .dark .shimmer {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.05) 50%,
-      transparent 100%
-    );
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.06) 50%, transparent 100%);
     background-size: 200% 100%;
   }
 
-  /* Section */
+  /* ── Layout ── */
   .section {
     @apply py-12 md:py-16 lg:py-20;
   }
@@ -268,62 +363,66 @@
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
-  /* Divider */
   .divider {
     @apply border-t border-gray-100 dark:border-dark-700;
   }
 
-  /* Glass effect */
+  /* ── Stitch Glass ── */
   .glass {
-    @apply bg-white/80 dark:bg-dark-900/80 backdrop-blur-md;
-    @apply border border-white/20 dark:border-dark-700/50;
+    @apply bg-white/80 dark:bg-dark-800/80 backdrop-blur-xl;
+    @apply border border-white/50 dark:border-dark-700/50;
   }
 
-  /* Gradient text */
+  /* ── Gradient text — Stitch red ── */
   .gradient-text {
-    @apply bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500 bg-clip-text text-transparent;
   }
 
-  /* Product price */
+  /* ── Product prices ── */
   .price-original {
     @apply text-gray-400 line-through text-sm;
   }
 
   .price-sale {
-    @apply text-red-600 dark:text-red-400 font-bold;
+    @apply text-primary-600 dark:text-primary-400 font-bold;
   }
 
   .price-regular {
     @apply text-gray-900 dark:text-gray-100 font-bold;
   }
 
-  /* Star rating */
+  /* ── Stars ── */
   .star-filled {
-    @apply text-yellow-400 fill-yellow-400;
+    @apply text-amber-400 fill-amber-400;
   }
 
   .star-empty {
-    @apply text-gray-300 dark:text-dark-600;
+    @apply text-gray-200 dark:text-dark-600;
   }
 
-  /* Notification dot */
+  /* ── Notification dot ── */
   .notification-dot {
-    @apply absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full;
+    @apply absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full;
+    box-shadow: 0 0 0 2px white;
   }
 
-  /* Sidebar */
+  .dark .notification-dot {
+    box-shadow: 0 0 0 2px #0f172a;
+  }
+
+  /* ── Sidebar ── */
   .sidebar-item {
-    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium;
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium;
     @apply text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100;
     @apply hover:bg-gray-100 dark:hover:bg-dark-800 transition-all duration-150;
   }
 
   .sidebar-item-active {
-    @apply sidebar-item bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300;
-    @apply hover:bg-primary-100 dark:hover:bg-primary-900/30;
+    @apply sidebar-item bg-primary-50 dark:bg-primary-900/15 text-primary-700 dark:text-primary-300;
+    @apply hover:bg-primary-100 dark:hover:bg-primary-900/25;
   }
 
-  /* Table */
+  /* ── Tables ── */
   .table-container {
     @apply overflow-x-auto rounded-xl border border-gray-100 dark:border-dark-700;
   }
@@ -334,7 +433,7 @@
 
   .table th {
     @apply px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400;
-    @apply bg-gray-50 dark:bg-dark-800 border-b border-gray-100 dark:border-dark-700;
+    @apply bg-gray-50 dark:bg-dark-800/60 border-b border-gray-100 dark:border-dark-700;
   }
 
   .table td {
@@ -350,7 +449,7 @@
     @apply bg-gray-50 dark:bg-dark-800/50;
   }
 
-  /* Form group */
+  /* ── Form ── */
   .form-group {
     @apply flex flex-col gap-1.5;
   }
@@ -360,25 +459,25 @@
   }
 
   .form-error {
-    @apply text-xs text-red-600 dark:text-red-400;
+    @apply text-xs text-red-600 dark:text-red-400 flex items-center gap-1;
   }
 
   .form-hint {
     @apply text-xs text-gray-500 dark:text-gray-400;
   }
 
-  /* Avatar */
+  /* ── Avatar ── */
   .avatar {
-    @apply rounded-full object-cover bg-gray-200 dark:bg-dark-700;
+    @apply rounded-full object-cover bg-gray-100 dark:bg-dark-700;
   }
 
-  /* Tooltip */
+  /* ── Tooltip ── */
   .tooltip {
-    @apply absolute z-50 px-2 py-1 text-xs font-medium text-white bg-gray-900 dark:bg-dark-700;
-    @apply rounded shadow-lg pointer-events-none whitespace-nowrap;
+    @apply absolute z-50 px-2.5 py-1.5 text-xs font-medium text-white bg-gray-900 dark:bg-dark-600;
+    @apply rounded-lg shadow-lg pointer-events-none whitespace-nowrap;
   }
 
-  /* Progress bar */
+  /* ── Progress ── */
   .progress-bar {
     @apply h-2 rounded-full bg-gray-100 dark:bg-dark-700 overflow-hidden;
   }
@@ -387,14 +486,78 @@
     @apply h-full rounded-full bg-primary-500 transition-all duration-500;
   }
 
-  /* Chat bubble */
+  /* ── Chat ── */
   .chat-bubble-user {
-    @apply bg-primary-600 text-white rounded-2xl rounded-br-sm px-4 py-2 max-w-xs;
+    @apply bg-primary-600 text-white rounded-2xl rounded-br-sm px-4 py-2.5 max-w-xs;
   }
 
   .chat-bubble-bot {
     @apply bg-gray-100 dark:bg-dark-700 text-gray-900 dark:text-gray-100;
-    @apply rounded-2xl rounded-bl-sm px-4 py-2 max-w-xs;
+    @apply rounded-2xl rounded-bl-sm px-4 py-2.5 max-w-xs;
+  }
+
+  /* ── Product card overlay ── */
+  .product-badge-new {
+    @apply absolute top-2 left-2 bg-primary-600 text-white text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide;
+  }
+
+  .product-badge-sale {
+    @apply absolute top-2 left-2 bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide;
+  }
+
+  /* ── Section headings helper ── */
+  .section-heading {
+    @apply text-2xl font-bold text-gray-900 dark:text-gray-100;
+  }
+
+  .section-subheading {
+    @apply text-sm text-gray-500 dark:text-gray-400 mt-1;
+  }
+
+  /* ── Stitch Pill tabs ── */
+  .tab-pill {
+    @apply px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer;
+    @apply text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100;
+    @apply hover:bg-gray-100 dark:hover:bg-dark-800;
+  }
+
+  .tab-pill-active {
+    @apply tab-pill bg-primary-600 text-white hover:bg-primary-700 hover:text-white;
+    @apply dark:bg-primary-600 dark:text-white dark:hover:bg-primary-700 dark:hover:text-white;
+  }
+
+  /* ── Stitch filter chip ── */
+  .chip {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium;
+    @apply border border-gray-200 dark:border-dark-600 bg-white dark:bg-dark-800;
+    @apply text-gray-700 dark:text-gray-300 cursor-pointer transition-all duration-150;
+    @apply hover:border-primary-400 hover:text-primary-600 dark:hover:text-primary-400;
+  }
+
+  .chip-active {
+    @apply chip bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-700;
+    @apply text-primary-700 dark:text-primary-300;
+  }
+
+  /* ── Stitch stat card ── */
+  .stat-card {
+    @apply card p-5 flex flex-col gap-2;
+  }
+
+  .stat-value {
+    @apply text-2xl font-bold text-gray-900 dark:text-gray-100;
+  }
+
+  .stat-label {
+    @apply text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-widest;
+  }
+
+  .stat-change-up {
+    @apply text-xs font-medium text-green-600 dark:text-green-400;
+  }
+
+  .stat-change-down {
+    @apply text-xs font-medium text-red-600 dark:text-red-400;
   }
 }
 
@@ -402,12 +565,17 @@
    Utility Classes
    ========================================== */
 @layer utilities {
-  /* Text balance */
   .text-balance {
     text-wrap: balance;
   }
 
-  /* Truncate multiline */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -422,7 +590,6 @@
     overflow: hidden;
   }
 
-  /* Hide scrollbar */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -432,31 +599,31 @@
     display: none;
   }
 
-  /* Thin scrollbar */
   .scrollbar-thin {
     scrollbar-width: thin;
   }
 
-  /* Aspect ratios */
   .aspect-product {
     aspect-ratio: 4/3;
   }
 
-  /* Gradient overlays */
+  .aspect-square-product {
+    aspect-ratio: 1/1;
+  }
+
   .gradient-overlay-bottom {
-    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, transparent 60%);
   }
 
   .gradient-overlay-top {
-    background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, transparent 50%);
   }
 
-  /* Blur backdrop */
-  .backdrop-blur-xs {
-    backdrop-filter: blur(2px);
+  /* Stitch red overlay */
+  .gradient-overlay-red {
+    background: linear-gradient(135deg, rgba(234, 42, 51, 0.9) 0%, rgba(185, 28, 28, 0.85) 100%);
   }
 
-  /* Safe area padding */
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
   }
@@ -464,48 +631,141 @@
   .pt-safe {
     padding-top: env(safe-area-inset-top);
   }
+
+  /* Stitch depth */
+  .depth-1 {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .depth-2 {
+    box-shadow: var(--shadow);
+  }
+
+  .depth-3 {
+    box-shadow: var(--shadow-md);
+  }
+
+  .depth-4 {
+    box-shadow: var(--shadow-lg);
+  }
 }
 
 /* ==========================================
    Animations
    ========================================== */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(10px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes slideDown {
-  from { transform: translateY(-10px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(-16px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    transform: translateX(16px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 @keyframes scaleIn {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.94);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes bounceSubtle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Stitch pulsing ring animation */
+@keyframes pulseRing {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.pulse-ring {
+  @apply absolute inset-0 rounded-full;
+  animation: pulseRing 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  background: rgba(234, 42, 51, 0.3);
 }
 
 /* ==========================================
-   Print Styles
+   Print
    ========================================== */
 @media print {
   .no-print {
@@ -513,7 +773,8 @@
   }
 
   body {
-    @apply text-black bg-white;
+    color: black;
+    background: white;
   }
 }
 
@@ -521,7 +782,15 @@
    Responsive Typography
    ========================================== */
 @media (max-width: 640px) {
-  h1 { @apply text-3xl; }
-  h2 { @apply text-2xl; }
-  h3 { @apply text-xl; }
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
 }

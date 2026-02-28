@@ -52,7 +52,7 @@ export const useAuthStore = create<AuthState>()(
       logout: async () => {
         try {
           await api.post('/auth/logout', { refreshToken: get().refreshToken });
-        } catch {}
+        } catch { }
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
@@ -60,6 +60,7 @@ export const useAuthStore = create<AuthState>()(
 
       setUser: (user) => set({ user }),
     }),
-    { name: 'auth-storage', partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }) }
+    { name: 'auth-storage', partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated, accessToken: state.accessToken, refreshToken: state.refreshToken }) }
+
   )
 );

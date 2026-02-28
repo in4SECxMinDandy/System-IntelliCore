@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { Spline_Sans } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import Navbar from '@/components/Navbar';
@@ -7,9 +7,11 @@ import Footer from '@/components/Footer';
 import { Toaster } from 'react-hot-toast';
 import ChatbotWidget from '@/components/ChatbotWidget';
 
-const inter = Inter({
+// Stitch design system font: Spline Sans
+const splineSans = Spline_Sans({
   subsets: ['latin'],
-  variable: '--font-inter',
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-spline-sans',
   display: 'swap',
 });
 
@@ -43,8 +45,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+    { media: '(prefers-color-scheme: light)', color: '#ea2a33' },
+    { media: '(prefers-color-scheme: dark)', color: '#1a0505' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -53,7 +55,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={inter.variable}>
+    <html lang="en" suppressHydrationWarning className={splineSans.variable}>
       <body className="font-sans bg-white dark:bg-dark-950 text-gray-900 dark:text-gray-100 antialiased">
         <Providers>
           {/* Skip to main content for accessibility */}

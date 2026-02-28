@@ -4,7 +4,7 @@
 
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
 
 export const api = axios.create({
   baseURL: `${API_URL}/api`,
@@ -14,7 +14,18 @@ export const api = axios.create({
 // Attach JWT token to every request
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('accessToken');
+    // Primary: direct localStorage key (set on login)
+    let token = localStorage.getItem('accessToken');
+    // Fallback: Zustand persist JSON storage
+    if (!token) {
+      try {
+        const stored = localStorage.getItem('auth-storage');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          token = parsed?.state?.accessToken || null;
+        }
+      } catch { }
+    }
     if (token) config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
