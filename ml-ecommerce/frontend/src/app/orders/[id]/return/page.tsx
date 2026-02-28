@@ -4,13 +4,18 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-    ArrowLeft, Sparkles, CheckCircle, Package, Loader2,
+    ArrowLeft, CheckCircle, Package, Loader2,
     AlertCircle, HeadphonesIcon, ChevronDown, ArrowRight
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import api from '@/lib/api';
 import { formatPrice } from '@/lib/utils';
 import toast from 'react-hot-toast';
+
+// Material Symbols icon component
+const MaterialIcon = ({ icon, className = '' }: { icon: string; className?: string }) => (
+  <span className={`material-symbols-outlined ${className}`}>{icon}</span>
+);
 
 interface OrderItem {
     id: string;

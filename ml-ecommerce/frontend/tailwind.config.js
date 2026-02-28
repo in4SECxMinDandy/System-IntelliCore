@@ -9,21 +9,29 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Stitch primary: Red #ea2a33
+        // Stitch primary: Orange #f27f0d
         primary: {
-          50: '#fef2f2',
-          100: '#fee2e2',
-          200: '#fecaca',
-          300: '#fca5a5',
-          400: '#f87171',
-          500: '#ef4444',
-          600: '#ea2a33',  // Stitch brand red
-          700: '#b91c1c',
-          800: '#991b1b',
-          900: '#7f1d1d',
-          950: '#450a0a',
+          DEFAULT: '#f27f0d',
+          50: '#fff7ed',
+          100: '#ffedd5',
+          200: '#fed7aa',
+          300: '#fdba74',
+          400: '#fb923c',
+          500: '#f97316',
+          600: '#f27f0d',
+          700: '#d16b08',
+          800: '#b45309',
+          900: '#92400e',
         },
-        // Stitch accent: warm orange/coral
+        // Stitch background colors
+        'background-light': '#f8f7f5',
+        'background-dark': '#181411',
+        'card-dark': '#221910',
+        'surface-dark': '#2f241a',
+        'border-dark': '#393028',
+        'text-light': '#baab9c',
+        'text-muted': '#baab9c',
+        // Original colors kept for compatibility
         accent: {
           50: '#fff7ed',
           100: '#ffedd5',
@@ -67,7 +75,6 @@ module.exports = {
           900: '#0f172a',
           950: '#020617',
         },
-        // Stitch neutral surface colors
         surface: {
           0: '#ffffff',
           1: '#f9fafb',
@@ -81,9 +88,9 @@ module.exports = {
         foreground: 'hsl(var(--foreground))',
       },
       fontFamily: {
-        // Stitch font: Spline Sans
-        sans: ['Spline Sans', 'Inter', 'system-ui', 'sans-serif'],
-        display: ['Spline Sans', 'system-ui', 'sans-serif'],
+        // Stitch font: Space Grotesk + system fonts
+        sans: ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Courier New', 'monospace'],
       },
       animation: {
@@ -133,16 +140,17 @@ module.exports = {
         },
       },
       boxShadow: {
-        // Stitch uses clean, soft shadows
+        // Stitch uses clean, soft shadows with neon glow effect
         'card': '0 1px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
         'card-hover': '0 8px 24px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)',
         'panel': '0 4px 16px rgba(0,0,0,0.08)',
         'modal': '0 20px 60px rgba(0,0,0,0.15)',
-        'glow-red': '0 0 24px rgba(234, 42, 51, 0.25)',
-        'glow-lg': '0 0 48px rgba(234, 42, 51, 0.20)',
-        'inner-glow': 'inset 0 0 20px rgba(234, 42, 51, 0.08)',
+        'glow-orange': '0 0 5px #f27f0d, 0 0 10px #f27f0d',
+        'glow-lg': '0 0 15px rgba(242,127,13,0.4), 0 0 30px rgba(242,127,13,0.2)',
+        'inner-glow': 'inset 0 0 20px rgba(242,127,13,0.08)',
         'sm': '0 1px 2px rgba(0,0,0,0.05)',
-        'focus-red': '0 0 0 3px rgba(234, 42, 51, 0.15)',
+        'focus-orange': '0 0 0 3px rgba(242,127,13,0.15)',
+        'neon': '0 0 15px -3px rgba(242,127,13,0.15)',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -150,6 +158,8 @@ module.exports = {
         'shimmer-gradient': 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)',
         'hero-gradient': 'linear-gradient(135deg, #1a0a0a 0%, #2d0707 40%, #1a0a0a 100%)',
         'card-gradient': 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(0,0,0,0.02) 100%)',
+        // Stitch dark gradient
+        'dark-gradient': 'linear-gradient(to bottom, #181411 0%, #221910 100%)',
       },
       borderRadius: {
         // Stitch uses roundness-8 (8px base)

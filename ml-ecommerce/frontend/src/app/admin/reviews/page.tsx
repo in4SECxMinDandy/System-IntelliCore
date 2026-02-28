@@ -6,6 +6,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
 
+// Material Symbols icon component
+const MaterialIcon = ({ icon, className = '' }: { icon: string; className?: string }) => (
+  <span className={`material-symbols-outlined ${className}`}>{icon}</span>
+);
+
 interface Review {
     id: string;
     product: {
@@ -61,11 +66,11 @@ function FakeProbBadge({ prob }: { prob: number }) {
 }
 
 const sidebarItems = [
-    { icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', label: 'Dashboard', active: false },
-    { icon: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z', label: 'Reviews', active: true },
-    { icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4', label: 'Products', active: false },
-    { icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z', label: 'Users', active: false },
-    { icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z', label: 'Settings', active: false },
+    { icon: 'dashboard', label: 'Dashboard', active: false },
+    { icon: 'rate_review', label: 'Reviews', active: true },
+    { icon: 'inventory_2', label: 'Products', active: false },
+    { icon: 'group', label: 'Users', active: false },
+    { icon: 'settings', label: 'Settings', active: false },
 ];
 
 export default function StaffModerationDashboard() {
@@ -126,23 +131,11 @@ export default function StaffModerationDashboard() {
                                 key={item.label}
                                 href="#"
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-sm font-medium ${item.active
-                                    ? 'bg-primary-50 dark:bg-[#393028] text-primary-600'
-                                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#393028]'
+                                    ? 'bg-primary/10 dark:bg-[#393028] text-primary'
+                                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#393028]'
                                     }`}
                             >
-                                <svg
-                                    className="w-5 h-5"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    strokeWidth={1.5}
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d={item.icon}
-                                    />
-                                </svg>
+                                <MaterialIcon className="text-xl">{item.icon}</MaterialIcon>
                                 <span>{item.label}</span>
                             </a>
                         ))}
@@ -174,37 +167,29 @@ export default function StaffModerationDashboard() {
             {/* Main Content */}
             <main className="flex-1 flex flex-col h-full overflow-hidden bg-gray-50 dark:bg-[#221910]">
                 {/* Header */}
-                <header className="flex items-center justify-between border-b border-gray-200 dark:border-[#393028] px-8 py-4 bg-white dark:bg-[#181411]">
+                <header className="flex items-center justify-between border-b border-slate-200 dark:border-[#393028] px-8 py-4 bg-white dark:bg-[#181411]">
                     <div className="flex items-center gap-4">
-                        <svg className="w-8 h-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                        <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                        <MaterialIcon className="text-primary text-3xl">verified_user</MaterialIcon>
+                        <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
                             Review Moderation
                         </h2>
                     </div>
                     <div className="flex items-center gap-6">
                         <div className="relative w-64 hidden lg:block">
-                            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+                            <MaterialIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</MaterialIcon>
                             <input
-                                className="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-100 dark:bg-[#2d231a] border-none text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 placeholder-gray-400"
+                                className="w-full pl-10 pr-4 py-2 rounded-lg bg-slate-100 dark:bg-[#2d231a] border-none text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary placeholder-slate-400"
                                 placeholder="Search reviews..."
                                 type="text"
                             />
                         </div>
-                        <div className="flex items-center gap-2 border-l border-gray-200 dark:border-[#393028] pl-6">
-                            <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#393028] text-gray-600 dark:text-gray-300 relative transition-colors">
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                                </svg>
-                                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary-600 border-2 border-white dark:border-[#181411]" />
+                        <div className="flex items-center gap-2 border-l border-slate-200 dark:border-[#393028] pl-6">
+                            <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-[#393028] text-slate-600 dark:text-slate-300 relative transition-colors">
+                                <MaterialIcon>notifications</MaterialIcon>
+                                <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary border-2 border-white dark:border-[#181411]" />
                             </button>
-                            <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#393028] text-gray-600 dark:text-gray-300 transition-colors">
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                </svg>
+                            <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-[#393028] text-slate-600 dark:text-slate-300 transition-colors">
+                                <MaterialIcon>chat_bubble</MaterialIcon>
                             </button>
                         </div>
                     </div>

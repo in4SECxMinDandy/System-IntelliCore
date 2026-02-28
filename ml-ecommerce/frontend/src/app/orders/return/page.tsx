@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import api from '@/lib/api';
+import Link from 'next/link';
 import { 
   Package, ArrowLeft, CheckCircle, AlertCircle, 
-  Upload, Image, Loader2, X
+  Upload, Image, Loader2, X, ArrowBack
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { AIPolicyCard } from '@/components/orders/AIPolicyCard';
 
 interface OrderItem {
   id: string;
@@ -16,42 +16,36 @@ interface OrderItem {
   productImage: string;
   quantity: number;
   unitPrice: number;
+  returnable?: boolean;
 }
+
+const returnReasons = [
+  { value: 'defective', label: 'Defective or Damaged' },
+  { value: 'wrong_item', label: 'Wrong Item Sent' },
+  { value: 'better_price', label: 'Better Price Available' },
+  { value: 'no_longer_needed', label: 'No Longer Needed' },
+  { value: 'late_delivery', label: 'Item arrived too late' },
+];
 
 export default function ReturnRequestPage() {
   const router = useRouter();
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [returnReason, setReturnReason] = useState('');
-  const [returnType, setReturnType] = useState<'refund' | 'exchange'>('refund');
+  const [selectedItems, setSelectedItems] = useState<string[]>(['1']);
+  const [returnReason, setReturnReason] = useState('defective');
   const [additionalInfo, setAdditionalInfo] = useState('');
-  const [images, setImages] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Get order ID from URL or use sample
-  const orderId = 'sample-order-id'; // In real app, get from URL params
-
-  const { data: order, isLoading } = useQuery({
-    queryKey: ['order', orderId],
-    queryFn: () => api.get(`/orders/${orderId}`).then(r => r.data.data),
-    // For demo, return mock data
-    queryFn: async () => ({
-      id: orderId,
-      orderNumber: 'ORD-2024-001234',
-      status: 'delivered',
-      deliveredAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      orderItems: [
-        { id: '1', productName: 'Premium Wireless Headphones', productImage: null, quantity: 1, unitPrice: 299.99 },
-        { id: '2', productName: 'USB-C Charging Cable', productImage: null, quantity: 2, unitPrice: 19.99 },
-        { id: '3', productName: 'Phone Case - Black', productImage: null, quantity: 1, unitPrice: 39.99 },
-      ] as OrderItem[]
-    }),
-  });
-
-  const createReturnMutation = useMutation({
-    mutationFn: (data: any) => api.post('/returns', data),
-    onSuccess: () => {
-      router.push('/orders?tab=returns');
-    },
-  });
+  // Mock order data
+  const mockOrder = {
+    id: '123456789',
+    orderNumber: 'ML-883855',
+    placedDate: 'Oct 24, 2023',
+    eligibleUntil: 'Nov 24, 2023',
+    items: [
+      { id: '1', productName: 'Wireless Noise Cancelling Headphones', productImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDY2L0948Xkb5PY-ZtVija1bwB9e90Jg1VxVIDuPGAJIEkqWsaL5fskTMRyJvNuufVmvV4BFkQwJiUmxSTwQ9F-Wzfbddb-JYnbIUNrF2e9sVYW9c3vJ29flbX8r5sewvHnPZ3TSjiAt7z-43yXKF_K-Q4539TImr5wk6NaQ765rHD-r_umDZbKyWHb8oqETFcoDWZW4qIRc_Eu8FnITxFgD32iceU8QI9300texksB7-UcT2Hfq4Xg0kIm3a8IAB6WClZ2x63G8dI', quantity: 1, unitPrice: 299.00, returnable: true },
+      { id: '2', productName: 'Smart Watch Series 7', productImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCNdbaTsXpdS3lqlPTuP5llbhEzxxOMlvSVFAduYCWnpSzRmnlX-5p6B_DReH8NZfo2EotOoDNizk2oQSn6s7ohlqEPPw_exxrKODO3kx1-mQv9i_2bAAtPUM2DuTAthYaqKqG2X9N-VrwJRn1jLDJHAfn1NMEf7g9I5Ae5cnB8PxpHb0geOf5Dh_nhLxrGe4S6XIC1o96QiI5-8qyjR1xeXQ-HQEL0QEVFEI14tlUmfrNdbAxzG2JntCnpOYcWT0kZTZx4LG04qKU', quantity: 1, unitPrice: 399.00, returnable: false },
+      { id: '3', productName: 'USB-C Fast Charging Cable', productImage: '', quantity: 1, unitPrice: 19.00, returnable: true },
+    ] as OrderItem[],
+  };
 
   const toggleItem = (itemId: string) => {
     setSelectedItems(prev => 
@@ -62,345 +56,213 @@ export default function ReturnRequestPage() {
   };
 
   const selectAll = () => {
-    if (!order?.orderItems) return;
-    if (selectedItems.length === order.orderItems.length) {
+    if (selectedItems.length === mockOrder.items.length) {
       setSelectedItems([]);
     } else {
-      setSelectedItems(order.orderItems.map((item: OrderItem) => item.id));
+      setSelectedItems(mockOrder.items.map(item => item.id));
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    if (selectedItems.length === 0) {
-      alert('Please select at least one item to return');
-      return;
-    }
-
-    if (!returnReason) {
-      alert('Please select a reason for return');
-      return;
-    }
-
-    createReturnMutation.mutate({
-      orderId,
-      items: selectedItems,
-      reason: returnReason,
-      type: returnType,
-      additionalInfo,
-      images,
-    });
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    alert('Return request submitted successfully!');
+    router.push('/orders');
   };
 
-  const canReturn = order && order.status === 'delivered' && 
-    (new Date().getTime() - new Date(order.deliveredAt).getTime()) < 30 * 24 * 60 * 60 * 1000;
-
-  const returnReasons = [
-    { value: 'defective', label: 'Product is defective or damaged' },
-    { value: 'wrong_item', label: 'Wrong item received' },
-    { value: 'not_as_described', label: 'Not as described' },
-    { value: 'no_longer_needed', label: 'No longer needed' },
-    { value: 'better_price', label: 'Found better price elsewhere' },
-    { value: 'other', label: 'Other' },
-  ];
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-dark-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
-      </div>
-    );
-  }
-
-  if (!canReturn) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-dark-950 py-12">
-        <div className="container mx-auto px-4 max-w-md">
-          <button 
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Order
-          </button>
-
-          <div className="card p-8 text-center">
-            <AlertCircle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              Return Not Available
-            </h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">
-              This order is no longer eligible for returns. Returns must be requested within 30 days of delivery.
-            </p>
-            <button 
-              onClick={() => router.push('/orders')}
-              className="btn-primary"
-            >
-              View My Orders
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const selectedTotal = order?.orderItems
-    ?.filter((item: OrderItem) => selectedItems.includes(item.id))
-    .reduce((sum: number, item: OrderItem) => sum + (item.unitPrice * item.quantity), 0) || 0;
+  const selectedTotal = mockOrder.items
+    ?.filter((item) => selectedItems.includes(item.id))
+    .reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0) || 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-950 py-8">
-      <div className="container mx-auto px-4 max-w-3xl">
-        {/* Header */}
-        <button 
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Order
-        </button>
-
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            Request a Return
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400">
-            Order #{order?.orderNumber}
-          </p>
+    <div className="min-h-screen bg-background-light dark:bg-[#181411] py-10 px-4 md:px-10">
+      <div className="max-w-[960px] mx-auto flex flex-col gap-8">
+        {/* Page Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-[#393028] pb-6">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2 text-primary-500 mb-1">
+              <ArrowBack className="w-4 h-4" />
+              <Link href="/orders" className="text-sm font-medium uppercase tracking-wider hover:underline">
+                Back to Orders
+              </Link>
+            </div>
+            <h1 className="text-3xl md:text-4xl md:text-5xl font-bold text-white leading-tight tracking-[-0.033em]">
+              Cancel Order & Returns
+            </h1>
+            <p className="text-[#baab9c] text-lg font-normal">
+              Order #{mockOrder.orderNumber} • Placed on {mockOrder.placedDate}
+            </p>
+          </div>
+          <div className="px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-2 text-green-400">
+            <CheckCircle className="w-4 h-4 fill-current" />
+            <span className="text-sm font-bold">Eligible for Return until {mockOrder.eligibleUntil}</span>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Step 1: Select Items */}
-          <div className="card p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-gray-900 dark:text-white">
-                1. Select Items to Return
-              </h2>
-              <button
-                type="button"
-                onClick={selectAll}
-                className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
-              >
-                {selectedItems.length === order?.orderItems?.length ? 'Deselect All' : 'Select All'}
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              {order?.orderItems?.map((item: OrderItem) => (
-                <label
-                  key={item.id}
-                  className={cn(
-                    "flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-all",
-                    selectedItems.includes(item.id)
-                      ? "border-primary-500 bg-primary-50 dark:bg-primary-900/10"
-                      : "border-gray-200 dark:border-dark-700 hover:border-gray-300"
-                  )}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedItems.includes(item.id)}
-                    onChange={() => toggleItem(item.id)}
-                    className="w-5 h-5 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                  />
-                  <div className="w-16 h-16 bg-gray-200 dark:bg-dark-700 rounded-lg flex items-center justify-center">
-                    {item.productImage ? (
-                      <img src={item.productImage} alt={item.productName} className="w-full h-full object-cover rounded-lg" />
-                    ) : (
-                      <Package className="w-6 h-6 text-gray-400" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900 dark:text-white">
-                      {item.productName}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Qty: {item.quantity} × ${item.unitPrice.toFixed(2)}
-                    </p>
-                  </div>
-                  <p className="font-semibold text-gray-900 dark:text-white">
-                    ${(item.unitPrice * item.quantity).toFixed(2)}
-                  </p>
-                </label>
-              ))}
-            </div>
-
-            {selectedItems.length > 0 && (
-              <div className="mt-4 p-4 bg-gray-50 dark:bg-dark-800 rounded-lg flex justify-between items-center">
-                <span className="font-medium text-gray-700 dark:text-gray-300">
-                  Return Total:
-                </span>
-                <span className="text-xl font-bold text-primary-600 dark:text-primary-400">
-                  ${selectedTotal.toFixed(2)}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Step 2: Return Type */}
-          <div className="card p-6">
-            <h2 className="font-semibold text-gray-900 dark:text-white mb-4">
-              2. Return Type
-            </h2>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <label
-                className={cn(
-                  "flex flex-col items-center p-4 rounded-lg border-2 cursor-pointer transition-all",
-                  returnType === 'refund'
-                    ? "border-primary-500 bg-primary-50 dark:bg-primary-900/10"
-                    : "border-gray-200 dark:border-dark-700 hover:border-gray-300"
-                )}
-              >
-                <input
-                  type="radio"
-                  name="returnType"
-                  value="refund"
-                  checked={returnType === 'refund'}
-                  onChange={() => setReturnType('refund')}
-                  className="sr-only"
-                />
-                <CheckCircle className={cn(
-                  "w-8 h-8 mb-2",
-                  returnType === 'refund' ? "text-primary-600" : "text-gray-400"
-                )} />
-                <span className="font-medium text-gray-900 dark:text-white">Full Refund</span>
-                <span className="text-sm text-gray-500 mt-1 text-center">
-                  Get money back to original payment method
-                </span>
-              </label>
-
-              <label
-                className={cn(
-                  "flex flex-col items-center p-4 rounded-lg border-2 cursor-pointer transition-all",
-                  returnType === 'exchange'
-                    ? "border-primary-500 bg-primary-50 dark:bg-primary-900/10"
-                    : "border-gray-200 dark:border-dark-700 hover:border-gray-300"
-                )}
-              >
-                <input
-                  type="radio"
-                  name="returnType"
-                  value="exchange"
-                  checked={returnType === 'exchange'}
-                  onChange={() => setReturnType('exchange')}
-                  className="sr-only"
-                />
-                <Package className={cn(
-                  "w-8 h-8 mb-2",
-                  returnType === 'exchange' ? "text-primary-600" : "text-gray-400"
-                )} />
-                <span className="font-medium text-gray-900 dark:text-white">Exchange</span>
-                <span className="text-sm text-gray-500 mt-1 text-center">
-                  Get a replacement for the item
-                </span>
-              </label>
-            </div>
-          </div>
-
-          {/* Step 3: Reason */}
-          <div className="card p-6">
-            <h2 className="font-semibold text-gray-900 dark:text-white mb-4">
-              3. Reason for Return
-            </h2>
-            
-            <select
-              value={returnReason}
-              onChange={(e) => setReturnReason(e.target.value)}
-              className="input w-full"
-              required
-            >
-              <option value="">Select a reason</option>
-              {returnReasons.map(reason => (
-                <option key={reason.value} value={reason.value}>
-                  {reason.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Step 4: Additional Info */}
-          <div className="card p-6">
-            <h2 className="font-semibold text-gray-900 dark:text-white mb-4">
-              4. Additional Information (Optional)
-            </h2>
-            
-            <textarea
-              value={additionalInfo}
-              onChange={(e) => setAdditionalInfo(e.target.value)}
-              placeholder="Please provide any additional details about your return..."
-              className="input w-full h-32 resize-none"
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column: Items Selection */}
+          <div className="lg:col-span-2 flex flex-col gap-8">
+            {/* AI Policy Check Card */}
+            <AIPolicyCard 
+              title="Good news! You're eligible for a full refund."
+              description="Based on your order status and return history, this request qualifies for an instant approval. No restocking fees apply if returned within 30 days."
+              eligible={true}
             />
 
-            {/* Image Upload */}
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Upload Photos (Optional)
-              </label>
-              <div className="flex gap-2 flex-wrap">
-                {images.map((img, index) => (
-                  <div key={index} className="relative w-20 h-20">
-                    <img src={img} alt={`Upload ${index + 1}`} className="w-full h-full object-cover rounded-lg" />
-                    <button
-                      type="button"
-                      onClick={() => setImages(prev => prev.filter((_, i) => i !== index))}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
+            {/* Select Items Section */}
+            <section className="bg-[#221910] rounded-xl border border-[#393028] p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-white">Select Items to Return</h2>
+                <button 
+                  onClick={selectAll}
+                  className="text-primary-500 text-sm font-medium hover:underline"
+                >
+                  Select All
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                {mockOrder.items.map((item) => (
+                  <label
+                    key={item.id}
+                    className={cn(
+                      'flex items-start gap-4 p-4 rounded-lg border transition-all cursor-pointer group',
+                      selectedItems.includes(item.id)
+                        ? 'border-primary-500 bg-primary-500/5'
+                        : 'border-[#393028] bg-[#2b2116]/50 hover:bg-[#342a20]'
+                    )}
+                  >
+                    <div className="pt-1">
+                      <input
+                        type="checkbox"
+                        checked={selectedItems.includes(item.id)}
+                        onChange={() => toggleItem(item.id)}
+                        className="w-5 h-5 rounded border-[#54473b] border-2 bg-transparent text-primary-500 focus:ring-0 focus:ring-offset-0 focus:border-primary-500 focus:outline-none accent-primary-500"
+                      />
+                    </div>
+                    <div className="h-20 w-20 rounded-lg bg-[#393028] shrink-0 overflow-hidden flex items-center justify-center">
+                      {item.productImage ? (
+                        <img 
+                          alt={item.productName} 
+                          className="h-full w-full object-cover" 
+                          src={item.productImage} 
+                        />
+                      ) : (
+                        <span className="material-symbols-outlined text-gray-400 text-3xl">cable</span>
+                      )}
+                    </div>
+                    <div className="flex flex-col grow gap-1">
+                      <div className="flex justify-between items-start w-full">
+                        <p className="text-white text-base font-semibold leading-tight">
+                          {item.productName}
+                        </p>
+                        <span className="text-white font-bold">${item.unitPrice.toFixed(2)}</span>
+                      </div>
+                      <p className="text-[#baab9c] text-sm">
+                        {item.productName.includes('Watch') ? 'Size: 44mm • Color: Midnight' : 
+                         item.productName.includes('Cable') ? 'Length: 2m' : 'Color: Black • Qty: 1'}
+                      </p>
+                      {item.returnable && (
+                        <div className="mt-2 text-xs text-green-400 flex items-center gap-1">
+                          <CheckCircle className="w-3.5 h-3.5" />
+                          Returnable
+                        </div>
+                      )}
+                    </div>
+                  </label>
                 ))}
-                <label className="w-20 h-20 border-2 border-dashed border-gray-300 dark:border-dark-600 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary-500 transition-colors">
-                  <Upload className="w-6 h-6 text-gray-400" />
-                  <span className="text-xs text-gray-400 mt-1">Add</span>
-                  <input type="file" className="hidden" accept="image/*" multiple />
-                </label>
+              </div>
+            </section>
+          </div>
+
+          {/* Right Column: Reason & Summary */}
+          <div className="flex flex-col gap-6">
+            {/* Reason Card */}
+            <div className="bg-[#221910] rounded-xl border border-[#393028] p-6 sticky top-24">
+              <h2 className="text-xl font-bold text-white mb-4">Reason for Return</h2>
+              
+              <div className="flex flex-col gap-4">
+                <div>
+                  <label className="text-xs font-bold text-[#baab9c] uppercase tracking-wider mb-2 block">
+                    Reason Code
+                  </label>
+                  <select 
+                    value={returnReason}
+                    onChange={(e) => setReturnReason(e.target.value)}
+                    className="w-full bg-[#1f1a14] border border-[#393028] text-white text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-3"
+                  >
+                    {returnReasons.map(reason => (
+                      <option key={reason.value} value={reason.value}>
+                        {reason.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-[#baab9c] uppercase tracking-wider mb-2 block">
+                    Additional Comments
+                  </label>
+                  <textarea 
+                    value={additionalInfo}
+                    onChange={(e) => setAdditionalInfo(e.target.value)}
+                    placeholder="Please provide more details..."
+                    className="w-full bg-[#1f1a14] border border-[#393028] text-white text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-3 h-32 resize-none"
+                  />
+                </div>
+
+                <div className="h-px bg-[#393028] my-2" />
+
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-[#baab9c]">Refund Method</span>
+                  <span className="text-white font-medium">Original Payment</span>
+                </div>
+
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-[#baab9c]">Estimated Refund</span>
+                  <span className="text-primary-500 font-bold text-lg">${selectedTotal.toFixed(2)}</span>
+                </div>
+
+                <button 
+                  onClick={handleSubmit}
+                  disabled={isSubmitting || selectedItems.length === 0}
+                  className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-4 px-6 rounded-lg shadow-lg shadow-primary-500/20 transition-all mt-2 flex items-center justify-center gap-2 text-base tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      <span>Request Refund</span>
+                      <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                    </>
+                  )}
+                </button>
+                
+                <p className="text-center text-xs text-[#baab9c] mt-2">
+                  By continuing, you agree to our <a href="#" className="underline hover:text-white">Return Policy</a>.
+                </p>
+              </div>
+            </div>
+
+            {/* Help Card */}
+            <div className="bg-blue-500/10 rounded-xl p-5 border border-blue-500/20">
+              <div className="flex gap-3">
+                <div className="bg-blue-500/20 rounded-full p-2 h-fit text-blue-400">
+                  <span className="material-symbols-outlined">headset_mic</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-white text-sm mb-1">Need help with this return?</h4>
+                  <p className="text-xs text-blue-200/70 mb-3">Our support team is available 24/7 to assist you with any questions.</p>
+                  <a href="#" className="text-xs font-bold text-blue-400 hover:underline">Contact Support</a>
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Summary */}
-          <div className="card p-6 bg-gray-50 dark:bg-dark-800">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-              Return Summary
-            </h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">Items to Return:</span>
-                <span className="text-gray-900 dark:text-white">{selectedItems.length}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">Return Type:</span>
-                <span className="text-gray-900 dark:text-white capitalize">{returnType}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">Refund Amount:</span>
-                <span className="text-primary-600 dark:text-primary-400 font-bold">
-                  ${selectedTotal.toFixed(2)}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={createReturnMutation.isPending || selectedItems.length === 0}
-            className="btn-primary w-full py-4 flex items-center justify-center gap-2"
-          >
-            {createReturnMutation.isPending ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              <>
-                <CheckCircle className="w-5 h-5" />
-                Submit Return Request
-              </>
-            )}
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );

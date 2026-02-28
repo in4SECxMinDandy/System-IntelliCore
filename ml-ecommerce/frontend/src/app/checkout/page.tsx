@@ -48,6 +48,11 @@ export default function CheckoutPage() {
   const [couponCode, setCouponCode] = useState('');
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponLoading, setCouponLoading] = useState(false);
+  
+  // Force dark theme
+  if (typeof window !== 'undefined') {
+    document.documentElement.classList.add('dark');
+  }
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderId, setOrderId] = useState('');
 

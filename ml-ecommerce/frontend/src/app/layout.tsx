@@ -7,6 +7,12 @@ import Footer from '@/components/Footer';
 import { Toaster } from 'react-hot-toast';
 import ChatbotWidget from '@/components/ChatbotWidget';
 
+// Material Symbols Outlined font
+const materialSymbols = {
+  src: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap',
+  rel: 'stylesheet' as const,
+};
+
 // Stitch design system font: Spline Sans
 const splineSans = Spline_Sans({
   subsets: ['latin'],
@@ -45,8 +51,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ea2a33' },
-    { media: '(prefers-color-scheme: dark)', color: '#1a0505' },
+    { media: '(prefers-color-scheme: light)', color: '#f27f0d' },
+    { media: '(prefers-color-scheme: dark)', color: '#181411' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -56,6 +62,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning className={splineSans.variable}>
+      <head>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" />
+      </head>
       <body className="font-sans bg-white dark:bg-dark-950 text-gray-900 dark:text-gray-100 antialiased">
         <Providers>
           {/* Skip to main content for accessibility */}
