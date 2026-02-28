@@ -29,6 +29,9 @@ const inventoryRoutes = require('./routes/inventory');
 const paymentRoutes = require('./routes/payments');
 const chatbotRoutes = require('./routes/chatbot');
 const adminRoutes = require('./routes/admin');
+const paypalRoutes = require('./routes/paypal');
+const flashSaleRoutes = require('./routes/flashSales');
+const socialAuthRoutes = require('./routes/socialAuth');
 
 // Prometheus metrics
 collectDefaultMetrics({ prefix: 'intellicore_' });
@@ -114,6 +117,9 @@ app.use('/api/2fa', twoFactorRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/admin/inventory', inventoryRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/paypal', paypalRoutes);
+app.use('/api/flash-sales', flashSaleRoutes);
+app.use('/api/auth/social', socialAuthRoutes);
 app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/admin', adminRoutes);
 

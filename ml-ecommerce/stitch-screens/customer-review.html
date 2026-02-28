@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Customer Review &amp; Rating System</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f27f0d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#181411", /* Slightly darker than config for deep contrast */
+                        "card-dark": "#221910",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<div class="relative flex w-full flex-col bg-background-dark border-b border-[#393028]">
+<header class="flex items-center justify-between whitespace-nowrap px-10 py-3 max-w-[1400px] mx-auto w-full">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<span class="material-symbols-outlined text-3xl">bolt</span>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">NeonMarket</h2>
+</div>
+<div class="hidden md:flex items-center gap-9">
+<a class="text-white hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Home</a>
+<a class="text-white hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Products</a>
+<a class="text-white hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Orders</a>
+<a class="text-white hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Support</a>
+</div>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="hidden lg:flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-[#2a221b] ring-1 ring-[#393028] focus-within:ring-primary">
+<div class="text-[#baab9c] flex border-none items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 border-none bg-transparent h-full placeholder:text-[#baab9c] px-4 rounded-l-none pl-2 text-sm font-normal leading-normal" placeholder="Search products..."/>
+</div>
+</label>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg size-10 bg-[#2a221b] text-white hover:text-primary transition-colors">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<button class="flex items-center justify-center rounded-lg size-10 bg-[#2a221b] text-white hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg size-10 bg-[#2a221b] text-white hover:text-primary transition-colors">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-primary/50" data-alt="User profile picture placeholder" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC6Q9shrYtU9gW_FljaAjNMzDrsd9B-y93Ew3gvBSJi4H4PlKZgbAk4RNH7VT-UfDB67W2Wb2V5n14zm5UPvB5lZjWVNXtqPcDAgQhf90iOsKvu4elQgipIMJWOMUne1pV2QMTCyS2fuPUceWj95t6bvPQNtnKFEQbmW6EbJoQCXCnuHsf5Yo2rRVT2XF5QTAjmuChjyOVT97QuN5ZwRSLyfVWgGriKIBLEA3OyokeKGqVzAhGzZQXlz7tNGA1acNU_kE8XabuHq04");'></div>
+</div>
+</header>
+</div>
+<!-- Main Content -->
+<main class="flex-grow flex justify-center py-10 px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col max-w-[1000px] w-full gap-8">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row gap-8 items-start justify-between border-b border-[#393028] pb-6">
+<div class="flex flex-col gap-2">
+<h1 class="text-white text-3xl md:text-4xl font-bold tracking-tight">Rate &amp; Review Product</h1>
+<p class="text-[#baab9c] text-base">Share your experience with the <span class="text-white font-medium">Wireless Noise Cancelling Headphones X5</span></p>
+</div>
+<div class="flex items-center gap-4 bg-[#2a221b] p-3 rounded-lg border border-[#393028]">
+<div class="size-16 rounded overflow-hidden bg-gray-700 shrink-0">
+<img alt="Headphones product image" class="w-full h-full object-cover" data-alt="Black wireless headphones on a light background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7lUh-lnbbmGbag23sgASctuPVhd0nYrQYTBuFK0TvLWD_gq79a0Z7OftZXm7NnjEOO6q5xgjkVu44G3RTutOwmfTVd45rFY7x7PUfAzyCSIO-1p_Yj0NJA--zP_b-NIreDV-yGTq4PgDOIQK1hyfhqlP1YZy9TQLGLHkTO_8CqDHqL0pc3d7dA8SHF3SX742HA_nbK0FXmZLFMo-MM70oSCWw7x0VIhPYvngGskAVMQ_XNPW8D-OW7ZHq6wN8GDyFn20m6UVZVPA"/>
+</div>
+<div>
+<p class="text-white text-sm font-bold">Model X5 - Matte Black</p>
+<p class="text-xs text-[#baab9c]">Purchased on Oct 12, 2023</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left Column: Ratings & Upload -->
+<div class="lg:col-span-2 flex flex-col gap-8">
+<!-- Multi-dimensional Rating -->
+<section class="bg-card-dark rounded-xl p-6 border border-[#393028] shadow-lg">
+<h3 class="text-white text-xl font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">stars</span>
+                            Overall Rating
+                        </h3>
+<div class="space-y-6">
+<!-- Quality -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<label class="text-[#baab9c] font-medium w-32">Build Quality</label>
+<div class="flex gap-2">
+<button class="text-primary hover:scale-110 transition-transform"><span class="material-symbols-outlined text-3xl fill-1">star</span></button>
+<button class="text-primary hover:scale-110 transition-transform"><span class="material-symbols-outlined text-3xl fill-1">star</span></button>
+<button class="text-primary hover:scale-110 transition-transform"><span class="material-symbols-outlined text-3xl fill-1">star</span></button>
+<button class="text-primary hover:scale-110 transition-transform"><span class="material-symbols-outlined text-3xl fill-1">star</span></button>
+<button class="text-[#393028] hover:text-primary transition-colors"><span class="material-symbols-outlined text-3xl">star</span></button>
+</div>
+<span class="text-sm text-primary font-bold ml-2">Good</span>
+</div>
+<!-- Delivery -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<label class="text-[#baab9c] font-medium w-32">Delivery Speed</label>
+<div class="flex gap-2">
+<button class="text-primary hover:scale-110 transition-transform"><span class="material-symbols-outlined text-3xl fill-1">star</span></button>
+<button class="text-primary hover:scale-110 transition-transform"><span class="material-symbols-outlined text-3xl fill-1">star</span></button>
+<button class="text-primary hover:scale-110 transition-transform"><span class="material-symbols-outlined text-3xl fill-1">star</span></button>
+<button class="text-primary hover:scale-110 transition-transform"><span class="material-symbols-outlined text-3xl fill-1">star</span></button>
+<button class="text-primary hover:scale-110 transition-transform"><span class="material-symbols-outlined text-3xl fill-1">star</span></button>
+</div>
+<span class="text-sm text-primary font-bold ml-2">Excellent</span>
+</div>
+<!-- Value -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<label class="text-[#baab9c] font-medium w-32">Value for Money</label>
+<div class="flex gap-2">
+<button class="text-primary hover:scale-110 transition-transform"><span class="material-symbols-outlined text-3xl fill-1">star</span></button>
+<button class="text-primary hover:scale-110 transition-transform"><span class="material-symbols-outlined text-3xl fill-1">star</span></button>
+<button class="text-primary hover:scale-110 transition-transform"><span class="material-symbols-outlined text-3xl fill-1">star</span></button>
+<button class="text-[#393028] hover:text-primary transition-colors"><span class="material-symbols-outlined text-3xl">star</span></button>
+<button class="text-[#393028] hover:text-primary transition-colors"><span class="material-symbols-outlined text-3xl">star</span></button>
+</div>
+<span class="text-sm text-[#baab9c] ml-2">Average</span>
+</div>
+</div>
+</section>
+<!-- Smart Review Assistant -->
+<section class="bg-card-dark rounded-xl p-6 border border-[#393028] shadow-lg relative group focus-within:ring-1 focus-within:ring-primary/50 transition-all">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-white text-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">edit_note</span>
+                                Write your review
+                            </h3>
+<div class="flex items-center gap-1 bg-green-900/30 text-green-400 px-2 py-1 rounded text-xs border border-green-900/50">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+                                AI Content Guard Active
+                            </div>
+</div>
+<div class="relative">
+<textarea class="w-full bg-[#181411] text-slate-100 p-4 rounded-lg border border-[#393028] focus:border-primary focus:ring-0 min-h-[200px] resize-y placeholder:text-gray-600" placeholder="What did you like or dislike? How was the fit?"></textarea>
+<!-- AI Floating Hints -->
+<div class="absolute bottom-4 right-4 flex gap-2 pointer-events-none">
+<span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full border border-primary/20 backdrop-blur-sm animate-pulse">Analyzing...</span>
+</div>
+</div>
+<!-- Smart Suggestions -->
+<div class="mt-4 pt-4 border-t border-[#393028]">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-sm">psychology</span>
+<span class="text-xs text-[#baab9c] uppercase tracking-wider font-bold">Smart Suggestions</span>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="text-xs bg-[#2a221b] hover:bg-[#393028] text-white px-3 py-1.5 rounded-full border border-[#393028] transition-colors flex items-center gap-1 group/btn">
+<span class="material-symbols-outlined text-[14px] text-primary">add</span> sound quality
+                                </button>
+<button class="text-xs bg-[#2a221b] hover:bg-[#393028] text-white px-3 py-1.5 rounded-full border border-[#393028] transition-colors flex items-center gap-1 group/btn">
+<span class="material-symbols-outlined text-[14px] text-primary">add</span> battery life
+                                </button>
+<button class="text-xs bg-[#2a221b] hover:bg-[#393028] text-white px-3 py-1.5 rounded-full border border-[#393028] transition-colors flex items-center gap-1 group/btn">
+<span class="material-symbols-outlined text-[14px] text-primary">add</span> comfort
+                                </button>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Media Upload & Summary -->
+<div class="lg:col-span-1 flex flex-col gap-8">
+<!-- Media Upload -->
+<section class="bg-card-dark rounded-xl p-6 border border-[#393028] shadow-lg h-full flex flex-col">
+<h3 class="text-white text-lg font-bold mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">photo_camera</span>
+                            Add Photos/Video
+                        </h3>
+<div class="flex-1 border-2 border-dashed border-[#393028] hover:border-primary/50 bg-[#181411] rounded-lg flex flex-col items-center justify-center p-8 text-center transition-colors cursor-pointer group">
+<div class="bg-[#2a221b] p-4 rounded-full mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl text-[#baab9c] group-hover:text-primary transition-colors">cloud_upload</span>
+</div>
+<p class="text-white font-medium mb-1">Click or drag files here</p>
+<p class="text-xs text-[#baab9c] mb-4">Supports JPG, PNG, MP4</p>
+<button class="px-4 py-2 bg-[#2a221b] text-white text-xs font-bold rounded hover:bg-[#393028] border border-[#393028]">Browse Files</button>
+</div>
+<!-- Preview Thumbnails (Empty state for now or static example) -->
+<div class="grid grid-cols-4 gap-2 mt-4">
+<!-- Placeholder for uploaded image -->
+</div>
+</section>
+<!-- Summary & Submit -->
+<section class="bg-gradient-to-br from-[#2a221b] to-card-dark rounded-xl p-6 border border-[#393028] shadow-lg">
+<div class="flex justify-between items-center mb-6">
+<span class="text-[#baab9c] text-sm">Review Score</span>
+<span class="text-primary text-2xl font-bold">4.2<span class="text-sm text-[#baab9c] font-normal">/5</span></span>
+</div>
+<div class="space-y-3 mb-6">
+<div class="flex items-center gap-2 text-xs text-[#baab9c]">
+<span class="material-symbols-outlined text-sm text-green-500">check</span>
+                                Verified Purchase
+                            </div>
+<div class="flex items-center gap-2 text-xs text-[#baab9c]">
+<span class="material-symbols-outlined text-sm text-primary">visibility</span>
+                                Public Profile
+                            </div>
+</div>
+<label class="flex items-start gap-3 mb-6 cursor-pointer group">
+<div class="relative flex items-center">
+<input class="peer h-4 w-4 cursor-pointer appearance-none rounded border border-[#393028] bg-[#181411] checked:border-primary checked:bg-primary transition-all" type="checkbox"/>
+<span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 text-white pointer-events-none">
+<svg class="h-3.5 w-3.5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill-rule="evenodd"></path></svg>
+</span>
+</div>
+<span class="text-xs text-[#baab9c] group-hover:text-white transition-colors">I accept the terms and conditions and certify this review is based on my own experience.</span>
+</label>
+<button class="w-full bg-gradient-to-r from-primary to-orange-600 hover:to-orange-500 text-white font-bold py-3 px-4 rounded-lg shadow-[0_0_20px_rgba(242,127,13,0.3)] hover:shadow-[0_0_30px_rgba(242,127,13,0.5)] transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                            Submit Review
+                            <span class="material-symbols-outlined">send</span>
+</button>
+</section>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Simple -->
+<footer class="border-t border-[#393028] bg-background-dark py-8 mt-10">
+<div class="max-w-[1400px] mx-auto px-10 text-center text-[#baab9c] text-sm">
+<p>© 2023 NeonMarket. All rights reserved.</p>
+</div>
+</footer>
+</body></html>

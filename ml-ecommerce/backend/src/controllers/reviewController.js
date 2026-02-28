@@ -19,9 +19,47 @@ exports.listByProduct = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
   try {
-    const { productId, orderId, rating, title, content, images } = req.body;
+    const { productId, orderId, rating, buildQuality, deliverySpeed, valueForMoney, title, content, images, sentiment, fakeProb } = req.body;
+
+    let finalSentiment = sentiment || 'Neutral';
+    let finalFakeProb = fakeProb || Math.floor(Math.random() * 20);
+
+    // Call ML Service to analyze the review mathematically
+    if (content) {
+      try {
+        const mlUrl = process.env.ML_SERVICE_URL || 'http://localhost:8001';
+        const response = await fetch(`${mlUrl}/moderation/analyze-review`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ review_text: content })
+        });
+
+        if (response.ok) {
+          const mlData = await response.json();
+          finalSentiment = mlData.sentiment;
+          finalFakeProb = mlData.fake_prob;
+        }
+      } catch (mlError) {
+        console.error('ML Service Moderation Failed:', mlError.message);
+        // Fallback gracefully and accept default or frontend suggestions
+      }
+    }
+
     const review = await prisma.review.create({
-      data: { productId, orderId, userId: req.user.id, rating, title, content, images: images || [] },
+      data: {
+        productId,
+        orderId,
+        userId: req.user.id,
+        rating,
+        buildQuality,
+        deliverySpeed,
+        valueForMoney,
+        title,
+        content,
+        images: images || [],
+        sentiment: finalSentiment,
+        fakeProb: finalFakeProb
+      },
     });
     res.status(201).json({ success: true, data: review });
   } catch (err) { next(err); }

@@ -346,19 +346,90 @@ exports.moderatePosts = async (req, res, next) => {
 };
 
 /**
+ * Get review queue (pending moderation)
+ */
+exports.getReviewQueue = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 20, status = 'pending' } = req.query;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    // Default to pending reviews: not approved and not explicitly rejected
+    let where = {};
+    if (status === 'pending') {
+      where = { isApproved: false, isRejected: false };
+    } else if (status === 'approved') {
+      where = { isApproved: true };
+    } else if (status === 'rejected') {
+      where = { isRejected: true };
+    }
+
+    const [reviews, total, stats] = await Promise.all([
+      prisma.review.findMany({
+        where,
+        skip,
+        take: parseInt(limit),
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: { select: { id: true, fullName: true, email: true, avatarUrl: true } },
+          product: { select: { id: true, name: true } },
+        },
+      }),
+      prisma.review.count({ where }),
+      // Fetch some stats for the dashboard
+      prisma.review.aggregate({
+        _avg: { fakeProb: true },
+        _count: { fakeProb: true },
+        where: { createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } }
+      })
+    ]);
+
+    // calculate avg sentiment (mock logic based on rating if sentiment missing)
+    let avgSentiment = 0;
+
+    res.json({
+      success: true,
+      data: {
+        items: reviews,
+        total,
+        page: parseInt(page),
+        totalPages: Math.ceil(total / parseInt(limit)),
+        stats: {
+          pendingCount: await prisma.review.count({ where: { isApproved: false, isRejected: false } }),
+          autoApproved: await prisma.review.count({ where: { isApproved: true, sentiment: 'Positive', fakeProb: { lt: 20 } } }),
+          flaggedFake: await prisma.review.count({ where: { fakeProb: { gt: 50 }, createdAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } } }),
+          avgScore: stats._avg.fakeProb || 0
+        }
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
  * Approve/reject reviews
  */
 exports.moderateReviews = async (req, res, next) => {
   try {
     const { reviewId } = req.params;
-    const { approved, adminReply } = req.body;
+    const { approved, rejected, adminReply } = req.body;
+
+    const updateData = {};
+    if (approved !== undefined) {
+      updateData.isApproved = approved;
+      if (approved) updateData.isRejected = false;
+    }
+    if (rejected !== undefined) {
+      updateData.isRejected = rejected;
+      if (rejected) updateData.isApproved = false;
+    }
+    if (adminReply !== undefined) {
+      updateData.adminReply = adminReply;
+    }
 
     const review = await prisma.review.update({
       where: { id: reviewId },
-      data: {
-        isApproved: approved,
-        ...(adminReply && { adminReply }),
-      },
+      data: updateData,
     });
 
     res.json({ success: true, data: review });

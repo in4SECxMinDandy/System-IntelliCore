@@ -32,6 +32,9 @@ model User {
   preferredCurrency String    @default("USD") @map("preferred_currency") @db.VarChar(10)
   loyaltyPoints     Int       @default(0) @map("loyalty_points")
   lastLoginAt       DateTime? @map("last_login_at") @db.Timestamptz
+  // Social Login
+  googleId          String?   @unique @map("google_id") @db.VarChar(255)
+  facebookId        String?   @unique @map("facebook_id") @db.VarChar(255)
   createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
 
@@ -397,12 +400,23 @@ model Review {
   productId           String   @map("product_id") @db.Uuid
   userId              String?  @map("user_id") @db.Uuid
   orderId             String?  @map("order_id") @db.Uuid
+  
+  // Ratings
   rating              Int?
+  buildQuality        Int?     @map("build_quality")
+  deliverySpeed       Int?     @map("delivery_speed")
+  valueForMoney       Int?     @map("value_for_money")
+  
   title               String?  @db.VarChar(255)
   content             String?
   images              String[]
+  
+  // AI Moderation & Status
+  sentiment           String?  @db.VarChar(50) // 'Positive', 'Negative', 'Neutral'
+  fakeProb            Int?     @default(0) @map("fake_prob")
   isVerifiedPurchase  Boolean  @default(false) @map("is_verified_purchase")
-  isApproved          Boolean  @default(false) @map("is_approved")
+  isApproved          Boolean  @default(false) @map("is_approved") // Pending if both are false
+  isRejected          Boolean  @default(false) @map("is_rejected")
   adminReply          String?  @map("admin_reply")
   helpfulCount        Int      @default(0) @map("helpful_count")
   createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz

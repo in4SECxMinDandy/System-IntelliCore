@@ -6,6 +6,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
+# Install openssl for Prisma
+RUN apk add --no-cache openssl
+
 # Copy Prisma schema and generate client
 COPY prisma ./prisma/
 RUN npx prisma generate

@@ -13,6 +13,7 @@ import time
 
 from routers import recommendations, health, training
 from routers.chatbot import router as chatbot_router
+from routers.moderation import router as moderation_router
 from services.model_manager import ModelManager
 
 logging.basicConfig(
@@ -121,6 +122,11 @@ app.include_router(
     chatbot_router,
     prefix="/recommendations",
     tags=["Chatbot"]
+)
+app.include_router(
+    moderation_router,
+    prefix="/moderation",
+    tags=["Moderation"]
 )
 
 

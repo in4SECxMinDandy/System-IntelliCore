@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Staff Review Moderation Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f27f0d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#221910",
+                        "surface-dark": "#2d231a", 
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "sans": ["Space Grotesk", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display antialiased overflow-hidden">
+<div class="flex h-screen w-full overflow-hidden">
+<!-- Sidebar -->
+<aside class="flex w-64 flex-col justify-between border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#181411] p-4">
+<div class="flex flex-col gap-4">
+<div class="flex gap-3 items-center mb-6">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-10 w-10 bg-primary/20" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDyFj55glMZVYeWNHVO3cqlAXZWNqG3kAZeOUZlvYJslXvu4o-LlJRUuDI3__WNpXDPnnBvMqHkAM6LedB-Mojx0jTl8VrMduNtWoYLrWu_IgQrgRCDo0QcG0SB7m78EP94vjHmAdiHYckWSxuqMbCGsMw4LQji10Am4Mjx3zhTBf56jzXu82-eiCnLhX3iuRxSyASZAmFJ0wLW7In5vhcbdOSD3Y4q0sHr_Z-0kSDS2CdA4nZH9EXMFlotpnsz_yJ2dIvCq3ioR80");'></div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-white text-base font-bold leading-normal">Mod Panel</h1>
+<p class="text-slate-500 dark:text-[#baab9c] text-xs font-normal leading-normal">Staff Access</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#393028] transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-[#393028] text-primary" href="#">
+<span class="material-symbols-outlined text-xl fill-1">rate_review</span>
+<span class="text-sm font-medium">Reviews</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#393028] transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">inventory_2</span>
+<span class="text-sm font-medium">Products</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#393028] transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">group</span>
+<span class="text-sm font-medium">Users</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#393028] transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto">
+<div class="flex flex-col gap-2 p-4 rounded-xl bg-slate-100 dark:bg-[#251e17] border border-slate-200 dark:border-[#393028]">
+<div class="flex items-center justify-between">
+<span class="text-xs font-medium text-slate-500 dark:text-[#baab9c]">System Status</span>
+<span class="flex h-2 w-2 rounded-full bg-green-500"></span>
+</div>
+<p class="text-xs text-slate-700 dark:text-slate-300">AI Analysis Active</p>
+<div class="w-full bg-slate-300 dark:bg-[#393028] rounded-full h-1 mt-1">
+<div class="bg-primary h-1 rounded-full" style="width: 92%"></div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark">
+<!-- Header -->
+<header class="flex items-center justify-between border-b border-slate-200 dark:border-[#393028] px-8 py-4 bg-white dark:bg-[#181411]">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-3xl">verified_user</span>
+<h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Review Moderation</h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative w-64">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg">search</span>
+<input class="w-full pl-10 pr-4 py-2 rounded-lg bg-slate-100 dark:bg-[#2d231a] border-none text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary placeholder-slate-400" placeholder="Search reviews..." type="text"/>
+</div>
+<div class="flex items-center gap-2 border-l border-slate-200 dark:border-[#393028] pl-6">
+<button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-[#393028] text-slate-600 dark:text-slate-300 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary border-2 border-white dark:border-[#181411]"></span>
+</button>
+<button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-[#393028] text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined">chat_bubble</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="flex-1 overflow-y-auto p-8">
+<!-- Stats Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+<!-- Stat Card 1 -->
+<div class="p-5 rounded-xl bg-white dark:bg-[#1e1914] border border-slate-200 dark:border-[#393028] shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<p class="text-sm font-medium text-slate-500 dark:text-[#baab9c]">Pending Reviews</p>
+<span class="p-1 rounded bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-lg">pending</span>
+</span>
+</div>
+<p class="text-3xl font-bold text-slate-900 dark:text-white">42</p>
+<p class="text-xs font-medium text-green-500 mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span> +5% from yesterday
+                        </p>
+</div>
+<!-- Stat Card 2 -->
+<div class="p-5 rounded-xl bg-white dark:bg-[#1e1914] border border-slate-200 dark:border-[#393028] shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<p class="text-sm font-medium text-slate-500 dark:text-[#baab9c]">Avg Sentiment</p>
+<span class="p-1 rounded bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-lg">mood</span>
+</span>
+</div>
+<p class="text-3xl font-bold text-slate-900 dark:text-white">78%</p>
+<p class="text-xs font-medium text-green-500 mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">arrow_upward</span> +2% this week
+                        </p>
+</div>
+<!-- Stat Card 3 -->
+<div class="p-5 rounded-xl bg-white dark:bg-[#1e1914] border border-slate-200 dark:border-[#393028] shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<p class="text-sm font-medium text-slate-500 dark:text-[#baab9c]">Flagged Fake</p>
+<span class="p-1 rounded bg-red-500/10 text-red-500">
+<span class="material-symbols-outlined text-lg">warning</span>
+</span>
+</div>
+<p class="text-3xl font-bold text-slate-900 dark:text-white">12%</p>
+<p class="text-xs font-medium text-green-500 mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">arrow_downward</span> -1% detection rate
+                        </p>
+</div>
+<!-- Stat Card 4 -->
+<div class="p-5 rounded-xl bg-white dark:bg-[#1e1914] border border-slate-200 dark:border-[#393028] shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<p class="text-sm font-medium text-slate-500 dark:text-[#baab9c]">Auto-Approved</p>
+<span class="p-1 rounded bg-green-500/10 text-green-500">
+<span class="material-symbols-outlined text-lg">check_circle</span>
+</span>
+</div>
+<p class="text-3xl font-bold text-slate-900 dark:text-white">156</p>
+<p class="text-xs font-medium text-green-500 mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span> +12% volume
+                        </p>
+</div>
+</div>
+<div class="flex flex-col lg:flex-row gap-8">
+<!-- Main List Area -->
+<div class="flex-1 flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Pending Approval Queue</h3>
+<div class="flex gap-3">
+<button class="px-4 py-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 text-sm font-bold transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">close</span> Reject All
+                                </button>
+<button class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-orange-600 text-sm font-bold shadow-lg shadow-primary/20 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">done_all</span> Approve All
+                                </button>
+</div>
+</div>
+<!-- Review Item 1 -->
+<div class="group flex flex-col md:flex-row gap-4 p-5 rounded-xl bg-white dark:bg-[#1e1914] border border-slate-200 dark:border-[#393028] shadow-sm hover:border-primary/50 transition-colors">
+<div class="flex-shrink-0">
+<div class="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center" data-alt="Reviewer avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCKvIIoXVJNF5r3eTT0NN1ny1xyC8IAxaNP-tlUOG1HmIn6H6Wb9OltHItb0ULChxOXBU8aPc2oJ5_V6xem0cwf9JM21JivpcbLHNW6PUTFrS2PDYR3L_xGXqh-RRosbrd9BHZ6Yq2qkSAECC440ZHb5C_JXNgdBjW45Znha4jhmG2MhMDOgnVte6MXO7oTvhma-6JQ4gEjhVZgg_0v1cLOjMBPZyvZakwwJAeRTv_rNMTwo7XWWpIqVlaX67H6LB6LcIXRyqfQLAc')"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white truncate">Michael Chen</h4>
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-[#baab9c]">
+<span>Running Shoes v4</span>
+<span class="w-1 h-1 rounded-full bg-slate-500"></span>
+<span>2 hours ago</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 rounded-md bg-green-500/10 text-green-500 text-xs font-bold border border-green-500/20">Positive</span>
+<span class="px-2 py-1 rounded-md bg-slate-100 dark:bg-[#2d231a] text-slate-500 text-xs font-bold border border-slate-200 dark:border-[#393028]">Fake Prob: 2%</span>
+</div>
+</div>
+<p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
+                                    Really impressed with the cushioning on these. I've been running marathons for 5 years and these are top tier. Shipping was a bit slow though.
+                                </p>
+<div class="flex gap-2">
+<button class="flex-1 py-1.5 rounded-lg bg-slate-100 dark:bg-[#2d231a] text-slate-600 dark:text-slate-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white text-xs font-bold transition-colors">Reject</button>
+<button class="flex-1 py-1.5 rounded-lg bg-primary/20 text-primary hover:bg-primary hover:text-white text-xs font-bold transition-colors">Approve</button>
+</div>
+</div>
+</div>
+<!-- Review Item 2 -->
+<div class="group flex flex-col md:flex-row gap-4 p-5 rounded-xl bg-white dark:bg-[#1e1914] border border-slate-200 dark:border-[#393028] shadow-sm hover:border-primary/50 transition-colors">
+<div class="flex-shrink-0">
+<div class="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center" data-alt="Reviewer avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDvK5ejuBEJBtTSOU_sCwtKHHYwwSloVQqQzG9wGrRhk4ZDlwEwF4-__sGQ3g7_aRFG8Hrd4KfcZQTmogsXGyF7SUaOzcYiKlrUClpg05fMqbfMSqrm5ZwEnlx8mPN12TXzzoeT5SwblOd_mH8ToZm5TIzbRrRypJeTD-sBGheilC33VYFY9wbjJjMvQ-h16dvoNDW2EXQS2TdaM-vIZZVLlCIeiLn4mVP3AvcSebbr3A5qgSM597MTILwNE4uBnHm6mKLWYeJ7Ktw')"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white truncate">Sarah Jenkins</h4>
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-[#baab9c]">
+<span>Hiking Backpack Pro</span>
+<span class="w-1 h-1 rounded-full bg-slate-500"></span>
+<span>5 hours ago</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 rounded-md bg-red-500/10 text-red-500 text-xs font-bold border border-red-500/20">Negative</span>
+<span class="px-2 py-1 rounded-md bg-red-500/10 text-red-500 text-xs font-bold border border-red-500/20">Fake Prob: 89%</span>
+</div>
+</div>
+<p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
+                                    THIS PRODUCT IS TERRIBLE DO NOT BUY. SCAM SCAM SCAM. CHECK MY BIO FOR REAL ONES.
+                                </p>
+<div class="flex gap-2">
+<button class="flex-1 py-1.5 rounded-lg bg-slate-100 dark:bg-[#2d231a] text-slate-600 dark:text-slate-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white text-xs font-bold transition-colors">Reject</button>
+<button class="flex-1 py-1.5 rounded-lg bg-primary/20 text-primary hover:bg-primary hover:text-white text-xs font-bold transition-colors">Approve</button>
+</div>
+</div>
+</div>
+<!-- Review Item 3 -->
+<div class="group flex flex-col md:flex-row gap-4 p-5 rounded-xl bg-white dark:bg-[#1e1914] border border-slate-200 dark:border-[#393028] shadow-sm hover:border-primary/50 transition-colors">
+<div class="flex-shrink-0">
+<div class="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center" data-alt="Reviewer avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAsIJZKteWcCjAA8UzvoTyGgPvP0wOe7PFJy9kkASAsEh9Xs8gZBtYZEbI4L1WVNvIxWliR-Kco9e9_ix_QxBSxuaWAUMalJ9meDHPBzl-VwpkIRhbulXVibSIiZTmdk7TBfNIJs9BRhI9eIB7GDWlO2t5ajtDcsa_guGMGoYSHyjbVYiQgxcnWL3z1RMb_G0K6HT4yYy0vgbzw7OlLdVZZXL78ZHG99-JvXzgpv2WRET3SM3VvbDCiqlAjARdus3yLiptnW96cs-I')"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white truncate">David Ross</h4>
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-[#baab9c]">
+<span>Wireless Earbuds</span>
+<span class="w-1 h-1 rounded-full bg-slate-500"></span>
+<span>6 hours ago</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 rounded-md bg-yellow-500/10 text-yellow-500 text-xs font-bold border border-yellow-500/20">Neutral</span>
+<span class="px-2 py-1 rounded-md bg-slate-100 dark:bg-[#2d231a] text-slate-500 text-xs font-bold border border-slate-200 dark:border-[#393028]">Fake Prob: 12%</span>
+</div>
+</div>
+<p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
+                                    They work fine but the battery life isn't quite 8 hours as advertised. More like 6. Sound quality is okay for the price.
+                                </p>
+<div class="flex gap-2">
+<button class="flex-1 py-1.5 rounded-lg bg-slate-100 dark:bg-[#2d231a] text-slate-600 dark:text-slate-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white text-xs font-bold transition-colors">Reject</button>
+<button class="flex-1 py-1.5 rounded-lg bg-primary/20 text-primary hover:bg-primary hover:text-white text-xs font-bold transition-colors">Approve</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar / Charts -->
+<div class="w-full lg:w-96 flex flex-col gap-6">
+<!-- Sentiment Trend Chart -->
+<div class="p-6 rounded-xl bg-white dark:bg-[#1e1914] border border-slate-200 dark:border-[#393028] shadow-sm flex flex-col h-auto">
+<div class="mb-6">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Sentiment Trend</h3>
+<p class="text-sm text-slate-500 dark:text-[#baab9c]">Last 7 Days • All Products</p>
+</div>
+<div class="relative h-48 w-full mb-4">
+<!-- Simulated Chart with SVG -->
+<svg class="w-full h-full overflow-visible" viewbox="0 0 300 150">
+<!-- Grid lines -->
+<line stroke="#334155" stroke-opacity="0.2" stroke-width="1" x1="0" x2="300" y1="150" y2="150"></line>
+<line stroke="#334155" stroke-dasharray="4" stroke-opacity="0.1" stroke-width="1" x1="0" x2="300" y1="100" y2="100"></line>
+<line stroke="#334155" stroke-dasharray="4" stroke-opacity="0.1" stroke-width="1" x1="0" x2="300" y1="50" y2="50"></line>
+<!-- Area Fill Gradient -->
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#f27f0d" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#f27f0d" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<!-- Chart Line -->
+<path d="M0,120 C30,110 50,80 80,90 C110,100 130,60 160,50 C190,40 210,70 240,60 C270,50 300,20 300,20" fill="none" stroke="#f27f0d" stroke-linecap="round" stroke-width="3"></path>
+<path d="M0,120 C30,110 50,80 80,90 C110,100 130,60 160,50 C190,40 210,70 240,60 C270,50 300,20 300,20 V150 H0 Z" fill="url(#chartGradient)" stroke="none"></path>
+<!-- Points -->
+<circle cx="80" cy="90" fill="#1e1914" r="4" stroke="#f27f0d" stroke-width="2"></circle>
+<circle cx="160" cy="50" fill="#1e1914" r="4" stroke="#f27f0d" stroke-width="2"></circle>
+<circle cx="240" cy="60" fill="#1e1914" r="4" stroke="#f27f0d" stroke-width="2"></circle>
+</svg>
+</div>
+<div class="flex justify-between text-xs text-slate-500 dark:text-[#baab9c] px-1">
+<span>Mon</span>
+<span>Tue</span>
+<span>Wed</span>
+<span>Thu</span>
+<span>Fri</span>
+<span>Sat</span>
+<span>Sun</span>
+</div>
+</div>
+<!-- Product Alert -->
+<div class="p-6 rounded-xl bg-red-500/5 border border-red-500/20 shadow-sm">
+<div class="flex items-start gap-3">
+<div class="p-2 rounded-lg bg-red-500/10 text-red-500">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Quality Alert</h4>
+<p class="text-sm text-slate-500 dark:text-[#baab9c] mt-1 mb-3">
+                                        "Hiking Backpack Pro" has received 15% more negative reviews in the last 24h.
+                                    </p>
+<button class="text-xs font-bold text-red-500 hover:text-red-400 flex items-center gap-1">
+                                        View Report <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Top Flags -->
+<div class="p-6 rounded-xl bg-white dark:bg-[#1e1914] border border-slate-200 dark:border-[#393028] shadow-sm flex-1">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Top Flag Reasons</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">smart_toy</span>
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">AI Generated</span>
+</div>
+<span class="text-sm font-bold text-slate-900 dark:text-white">45%</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-[#2d231a] rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 45%"></div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">g_translate</span>
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Profanity</span>
+</div>
+<span class="text-sm font-bold text-slate-900 dark:text-white">32%</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-[#2d231a] rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 32%"></div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">link</span>
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Spam Links</span>
+</div>
+<span class="text-sm font-bold text-slate-900 dark:text-white">18%</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-[#2d231a] rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 18%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

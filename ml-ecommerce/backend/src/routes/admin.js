@@ -24,6 +24,7 @@ router.patch('/users/:userId', adminController.updateUser);
 router.get('/orders', adminController.getOrderAnalytics);
 
 // Moderation
+router.get('/reviews/queue', adminController.getReviewQueue);
 router.patch('/community/posts/:postId/moderate', adminController.moderatePosts);
 router.patch('/reviews/:reviewId/moderate', adminController.moderateReviews);
 
