@@ -4,7 +4,7 @@ A full-stack e-commerce platform with machine learning-powered product recommend
 
 ## 🏗️ Architecture
 
-```
+```text
 ml-ecommerce/
 ├── backend/          # Node.js/Express REST API
 ├── frontend/         # Next.js 14 (App Router) + TypeScript
@@ -17,7 +17,7 @@ ml-ecommerce/
 ## 🚀 Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
+| --- | --- |
 | **Frontend** | Next.js 14, TypeScript, Tailwind CSS, Zustand, React Query |
 | **Backend API** | Node.js, Express, Prisma ORM |
 | **ML Service** | FastAPI, Python, scikit-learn, implicit (ALS) |
@@ -39,6 +39,7 @@ ml-ecommerce/
 ## 📦 Quick Start
 
 ### Prerequisites
+
 - Docker & Docker Compose
 - Node.js 20+ (for local development)
 - Python 3.11+ (for local ML development)
@@ -66,18 +67,19 @@ docker-compose exec backend npm run prisma:seed
 ### 4. Access the application
 
 | Service | URL |
-|---------|-----|
-| Frontend | http://localhost:3000 |
-| Backend API | http://localhost:4000 |
-| ML Service | http://localhost:8001 |
-| MLflow | http://localhost:5000 |
-| Prometheus | http://localhost:9090 |
-| Grafana | http://localhost:3001 |
+| --- | --- |
+| Frontend | <http://localhost:3000> |
+| Backend API | <http://localhost:4000> |
+| ML Service | <http://localhost:8001> |
+| MLflow | <http://localhost:5000> |
+| Prometheus | <http://localhost:9090> |
+| Grafana | <http://localhost:3001> |
 
 ## 🔌 API Endpoints
 
 ### Authentication
-```
+
+```text
 POST /api/auth/register
 POST /api/auth/login
 POST /api/auth/refresh
@@ -86,7 +88,8 @@ GET  /api/auth/me
 ```
 
 ### Products
-```
+
+```text
 GET  /api/products          # List with filters & pagination
 GET  /api/products/featured
 GET  /api/products/search?q=
@@ -96,7 +99,8 @@ PUT  /api/products/:id      # Admin only
 ```
 
 ### Recommendations
-```
+
+```text
 GET  /api/recommendations/for-you       # Personalized (CF)
 GET  /api/recommendations/similar/:id   # Content-based
 GET  /api/recommendations/trending
@@ -105,7 +109,8 @@ POST /api/recommendations/track         # Track user events
 ```
 
 ### Orders & Cart
-```
+
+```text
 GET  /api/cart
 POST /api/cart/items
 PUT  /api/cart/items/:id
@@ -119,7 +124,7 @@ PATCH /api/orders/:id/cancel
 
 ## 🧠 ML Service Endpoints
 
-```
+```text
 GET  /health
 GET  /recommendations/user?user_id=&limit=
 GET  /recommendations/similar?product_id=&limit=
@@ -132,6 +137,7 @@ GET  /training/status
 ## 📊 Database Schema
 
 The PostgreSQL schema includes:
+
 - **Users** — Authentication, roles (customer/staff/admin/superadmin)
 - **Products** — Catalog with categories, brands, variants, images
 - **Orders** — Full order lifecycle with status tracking
@@ -144,6 +150,7 @@ The PostgreSQL schema includes:
 ## 🔧 Development
 
 ### Backend
+
 ```bash
 cd backend
 npm install
@@ -152,6 +159,7 @@ npm run dev
 ```
 
 ### Frontend
+
 ```bash
 cd frontend
 npm install
@@ -159,6 +167,7 @@ npm run dev
 ```
 
 ### ML Service
+
 ```bash
 cd ml-service
 pip install -r requirements.txt
@@ -166,6 +175,7 @@ uvicorn main:app --reload --port 8001
 ```
 
 ### Train ML Models
+
 ```bash
 curl -X POST http://localhost:8001/training/trigger
 ```
@@ -173,7 +183,7 @@ curl -X POST http://localhost:8001/training/trigger
 ## 📈 Monitoring
 
 - **Prometheus** scrapes metrics from backend (`/metrics`) and ML service
-- **Grafana** dashboards at http://localhost:3001 (admin/admin123)
+- **Grafana** dashboards at <http://localhost:3001> (admin/admin123)
 - Backend exposes `prom-client` metrics with `ml_ecommerce_` prefix
 
 ## 🔒 Security
@@ -190,6 +200,7 @@ curl -X POST http://localhost:8001/training/trigger
 See [`.env.example`](.env.example) for all required configuration.
 
 Key variables:
+
 - `DATABASE_URL` — PostgreSQL connection string
 - `REDIS_URL` — Redis connection string
 - `MONGODB_URI` — MongoDB connection string
