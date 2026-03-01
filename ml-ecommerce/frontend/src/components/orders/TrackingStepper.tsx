@@ -1,11 +1,13 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Check, Package, LocalShipping, Home, Circle } from 'lucide-react';
+import { Check, Package, Truck, Home, Circle } from 'lucide-react';
 
 interface TrackingStep {
-  id: string;
-  title: string;
+  id?: string;
+  key?: string;
+  title?: string;
+  label?: string;
   description: string;
   timestamp?: string;
 }
@@ -23,9 +25,11 @@ export default function TrackingStepper({ steps, currentStep, className }: Track
         const isCompleted = index < currentStep;
         const isCurrent = index === currentStep;
         const isLast = index === steps.length - 1;
+        const stepId = step.id || step.key || index.toString();
+        const stepTitle = step.title || step.label || '';
 
         return (
-          <div key={step.id} className={cn('flex gap-4 pb-8 relative group', isLast && 'pb-0')}>
+          <div key={stepId} className={cn('flex gap-4 pb-8 relative group', isLast && 'pb-0')}>
             {/* Icon Column */}
             <div className="flex flex-col items-center">
               {isCompleted ? (
@@ -40,7 +44,7 @@ export default function TrackingStepper({ steps, currentStep, className }: Track
               ) : isCurrent ? (
                 <>
                   <div className="z-10 flex items-center justify-center w-10 h-10 -ml-1 rounded-full bg-background-light dark:bg-background-dark border-2 border-primary-500 text-primary-500 shadow-[0_0_20px_rgba(242,127,13,0.4)] animate-pulse">
-                    <LocalShipping className="w-5 h-5" />
+                    <Truck className="w-5 h-5" />
                   </div>
                   {!isLast && (
                     <div className="w-0.5 h-full bg-gray-200 dark:bg-gray-700 absolute top-9 left-4 -translate-x-1/2 border-l border-dashed border-gray-400 dark:border-gray-600" />
@@ -68,7 +72,7 @@ export default function TrackingStepper({ steps, currentStep, className }: Track
                     isCurrent && 'text-primary-500',
                     !isCompleted && !isCurrent && 'text-gray-900 dark:text-white opacity-50'
                   )}>
-                    {step.title}
+                    {stepTitle}
                   </h4>
                   <p className={cn(
                     'text-sm mt-1',

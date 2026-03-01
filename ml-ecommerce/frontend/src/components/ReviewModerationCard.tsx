@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle, Close, Warning, Mood, TrendingUp, TrendingDown } from 'lucide-react';
+import { CheckCircle, Close, AlertTriangle, Frown, TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import StarRating from './StarRating';
 
@@ -42,7 +42,7 @@ export default function ReviewModerationCard({
     neutral: { 
       label: 'Neutral', 
       color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
-      icon: Mood 
+      icon: Frown 
     },
   };
 

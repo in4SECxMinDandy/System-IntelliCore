@@ -1,8 +1,8 @@
 'use client';
 
 import { 
-  Pending, Mood, Warning, CheckCircle, 
-  TrendingUp, TrendingDown, VerifiedUser, Psychology 
+  Clock, Frown, AlertTriangle, CheckCircle, 
+  TrendingUp, TrendingDown, ShieldCheck, Brain 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -62,9 +62,9 @@ interface ModerationStatsProps {
 
 export default function ModerationStats({ stats, flagReasons = [] }: ModerationStatsProps) {
   const defaultReasons: FlagReason[] = [
-    { reason: 'AI Generated', percentage: 45, icon: Psychology },
-    { reason: 'Profanity', percentage: 32, icon: Warning },
-    { reason: 'Spam Links', percentage: 18, icon: Warning },
+    { reason: 'AI Generated', percentage: 45, icon: Brain },
+    { reason: 'Profanity', percentage: 32, icon: AlertTriangle },
+    { reason: 'Spam Links', percentage: 18, icon: AlertTriangle },
   ];
 
   const reasons = flagReasons.length > 0 ? flagReasons : defaultReasons;
@@ -78,7 +78,7 @@ export default function ModerationStats({ stats, flagReasons = [] }: ModerationS
           value={stats.pendingReviews}
           change={stats.pendingChange || '+5% from yesterday'}
           changeType="up"
-          icon={Pending}
+          icon={Clock}
           iconColor="bg-primary-500/10 text-primary-500"
         />
         <StatCard 
@@ -86,7 +86,7 @@ export default function ModerationStats({ stats, flagReasons = [] }: ModerationS
           value={`${stats.avgSentiment}%`}
           change={stats.sentimentChange || '+2% this week'}
           changeType="up"
-          icon={Mood}
+          icon={Frown}
           iconColor="bg-primary-500/10 text-primary-500"
         />
         <StatCard 
@@ -94,7 +94,7 @@ export default function ModerationStats({ stats, flagReasons = [] }: ModerationS
           value={`${stats.flaggedFake}%`}
           change={stats.fakeChange || '-1% detection rate'}
           changeType="down"
-          icon={Warning}
+          icon={AlertTriangle}
           iconColor="bg-red-500/10 text-red-500"
         />
         <StatCard 

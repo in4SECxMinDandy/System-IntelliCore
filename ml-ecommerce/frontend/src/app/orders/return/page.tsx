@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   Package, ArrowLeft, CheckCircle, AlertCircle, 
-  Upload, Image, Loader2, X, ArrowBack
+  Upload, Image, Loader2, X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AIPolicyCard } from '@/components/orders/AIPolicyCard';
@@ -85,7 +85,7 @@ export default function ReturnRequestPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-[#393028] pb-6">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 text-primary-500 mb-1">
-              <ArrowBack className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4" />
               <Link href="/orders" className="text-sm font-medium uppercase tracking-wider hover:underline">
                 Back to Orders
               </Link>

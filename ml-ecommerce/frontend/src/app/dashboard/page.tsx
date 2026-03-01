@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/authStore';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   ShoppingBag, Heart, Star, TrendingUp, Package, Bell,
@@ -41,10 +41,33 @@ function StatCard({ icon: Icon, label, value, change, color }: {
 export default function DashboardPage() {
   const { user, isAuthenticated } = useAuthStore();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) router.push('/login?redirect=/dashboard');
-  }, [isAuthenticated, router]);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !isAuthenticated) {
+      router.push('/login?redirect=/dashboard');
+    }
+  }, [mounted, isAuthenticated, router]);
+
+  // Show loading skeleton while checking auth or not authenticated
+  if (!mounted || !isAuthenticated) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="animate-pulse">
+          <div className="h-20 bg-gray-200 dark:bg-dark-700 rounded-xl mb-8"></div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="h-32 bg-gray-200 dark:bg-dark-700 rounded-xl"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const { data: orders } = useQuery({
     queryKey: ['orders', 'recent'],
@@ -69,8 +92,6 @@ export default function DashboardPage() {
     queryFn: () => api.get('/notifications?limit=5').then(r => r.data.data),
     enabled: isAuthenticated,
   });
-
-  if (!isAuthenticated) return null;
 
   const orderStats = {
     total: orders?.total || 0,

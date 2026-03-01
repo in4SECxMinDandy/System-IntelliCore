@@ -17,13 +17,13 @@ const menuItems = [
   { icon: 'person', label: 'My Profile', href: '/profile' },
   { icon: 'shopping_bag', label: 'My Orders', href: '/orders', active: true },
   { icon: 'favorite', label: 'Wishlist', href: '/wishlist' },
-  { icon: 'account_balance_wallet', label: 'Payment Methods', href: '/profile' },
-  { icon: 'location_on', label: 'Address Book', href: '/profile' },
+  { icon: 'account_balance_wallet', label: 'Payment Methods', href: '/profile/payment-methods' },
+  { icon: 'location_on', label: 'Address Book', href: '/profile/addresses' },
 ];
 
 // Material Symbols icon component
-const MaterialIcon = ({ icon, className = '' }: { icon: string; className?: string }) => (
-  <span className={`material-symbols-outlined ${className}`}>{icon}</span>
+const MaterialIcon = ({ icon, className, children }: { icon?: string; className?: string; children?: React.ReactNode }) => (
+  <span className={`material-symbols-outlined ${className}`}>{icon || children}</span>
 );
 
 export default function OrderSidebar({ user }: OrderSidebarProps) {

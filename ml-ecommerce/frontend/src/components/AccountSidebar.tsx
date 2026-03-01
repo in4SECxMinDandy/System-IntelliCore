@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-  User, ShoppingBag, Heart, AccountBalanceWallet, LocationOn, 
-  AutoAwesome, Star, Settings, LogOut, Zap 
+  User, ShoppingBag, Heart, Wallet, MapPin, 
+  Sparkles, Star, Settings, LogOut, Zap 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store/authStore';
@@ -17,8 +17,8 @@ const menuItems = [
   { icon: User, label: 'My Profile', href: '/profile' },
   { icon: ShoppingBag, label: 'My Orders', href: '/orders', active: true },
   { icon: Heart, label: 'Wishlist', href: '/wishlist' },
-  { icon: AccountBalanceWallet, label: 'Payment Methods', href: '/profile' },
-  { icon: LocationOn, label: 'Address Book', href: '/profile' },
+  { icon: Wallet, label: 'Payment Methods', href: '/profile' },
+  { icon: MapPin, label: 'Address Book', href: '/profile' },
 ];
 
 const recommendedProducts = [
@@ -80,7 +80,7 @@ export default function AccountSidebar({ children }: SidebarProps) {
       {/* Recommended Sidebar Widget */}
       <div className="bg-stitch-card rounded-xl p-5 border border-stitch-border">
         <div className="flex items-center gap-2 mb-4 text-primary-500">
-          <AutoAwesome className="w-4 h-4" />
+          <Sparkles className="w-4 h-4" />
           <h3 className="text-sm font-bold text-white uppercase tracking-wider">Recommended</h3>
         </div>
         <div className="flex flex-col gap-4">

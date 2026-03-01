@@ -8,8 +8,8 @@ import {
   Phone, Mail, ChevronRight, Loader2, AlertCircle, Receipt
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { TrackingStepper } from '@/components/orders/TrackingStepper';
-import { MapView } from '@/components/orders/MapView';
+import TrackingStepper from '@/components/orders/TrackingStepper';
+import MapView from '@/components/orders/MapView';
 
 interface OrderItem {
   id: string;

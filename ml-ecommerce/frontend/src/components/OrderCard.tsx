@@ -4,8 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 // Material Symbols icon component
-const MaterialIcon = ({ icon, className = '' }: { icon: string; className?: string }) => (
-  <span className={`material-symbols-outlined ${className}`}>{icon}</span>
+const MaterialIcon = ({ icon, className, children }: { icon?: string; className?: string; children?: React.ReactNode }) => (
+  <span className={`material-symbols-outlined ${className}`}>{icon || children}</span>
 );
 
 interface OrderItem {
@@ -182,7 +182,7 @@ export default function OrderCard({ order, showEstimatedDelivery, estimatedDeliv
             </div>
             <div className="mt-2">
               <span className="text-xl font-bold text-white dark:text-white">
-                ${order.totalAmount.toFixed(2)}
+                ${Number(order.totalAmount).toFixed(2)}
               </span>
             </div>
           </div>

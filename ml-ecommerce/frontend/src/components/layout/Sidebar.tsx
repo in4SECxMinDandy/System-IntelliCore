@@ -4,12 +4,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import {
-  Person,
+  User,
   ShoppingBag,
-  Favorite,
-  AccountBalanceWallet,
-  LocationOn,
-  AutoAwesome,
+  Heart,
+  Wallet,
+  MapPin,
+  Sparkles,
   Settings,
   LogOut,
   ChevronRight,
@@ -20,11 +20,11 @@ interface SidebarProps {
 }
 
 const menuItems = [
-  { icon: Person, label: 'My Profile', href: '/profile' },
+  { icon: User, label: 'My Profile', href: '/profile' },
   { icon: ShoppingBag, label: 'My Orders', href: '/orders', active: true },
-  { icon: Favorite, label: 'Wishlist', href: '/wishlist' },
-  { icon: AccountBalanceWallet, label: 'Payment Methods', href: '/profile#payment' },
-  { icon: LocationOn, label: 'Address Book', href: '/profile#address' },
+  { icon: Heart, label: 'Wishlist', href: '/wishlist' },
+  { icon: Wallet, label: 'Payment Methods', href: '/profile#payment' },
+  { icon: MapPin, label: 'Address Book', href: '/profile#address' },
 ];
 
 const recommendedItems = [
@@ -82,7 +82,7 @@ export default function Sidebar({ className }: SidebarProps) {
       {/* Recommended Sidebar Widget */}
       <div className="bg-card-dark dark:bg-surface-dark rounded-xl p-5 border border-border-dark dark:border-border-dark">
         <div className="flex items-center gap-2 mb-4 text-primary-500">
-          <AutoAwesome className="w-4 h-4 fill-current" />
+          <Sparkles className="w-4 h-4 fill-current" />
           <h3 className="text-sm font-bold text-white uppercase tracking-wider">Recommended</h3>
         </div>
         <div className="flex flex-col gap-4">

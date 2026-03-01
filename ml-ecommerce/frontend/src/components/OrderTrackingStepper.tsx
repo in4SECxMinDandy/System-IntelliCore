@@ -17,8 +17,8 @@ interface OrderTrackingStepperProps {
   currentStep?: number;
 }
 
-const MaterialIcon = ({ icon, className = '' }: { icon: string; className?: string }) => (
-  <span className={`material-symbols-outlined ${className}`}>{icon}</span>
+const MaterialIcon = ({ icon, className, children }: { icon?: string; className?: string; children?: React.ReactNode }) => (
+  <span className={`material-symbols-outlined ${className}`}>{icon || children}</span>
 );
 
 export default function OrderTrackingStepper({ steps, currentStep = 0 }: OrderTrackingStepperProps) {

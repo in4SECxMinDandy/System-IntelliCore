@@ -106,9 +106,14 @@ export default function Navbar() {
   const [notifCount] = useState(3); // Mock notification count
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const categoriesRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -259,7 +264,7 @@ export default function Navbar() {
               </Link>
 
               {/* Notifications */}
-              {isAuthenticated && (
+              {mounted && isAuthenticated && (
                 <Link
                   href="/notifications"
                   className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-800 transition-colors relative"
@@ -277,7 +282,7 @@ export default function Navbar() {
                 className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-800 transition-colors relative"
               >
                 <ShoppingCart className="w-5 h-5" />
-                {totalItems() > 0 && (
+                {mounted && totalItems() > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-primary-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
                     {totalItems() > 99 ? '99+' : totalItems()}
                   </span>
@@ -285,7 +290,7 @@ export default function Navbar() {
               </Link>
 
               {/* User Menu */}
-              {isAuthenticated ? (
+              {mounted && isAuthenticated ? (
                 <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
@@ -421,7 +426,7 @@ export default function Navbar() {
                   </Link>
                 ))}
               </div>
-              {!isAuthenticated && (
+              {mounted && !isAuthenticated && (
                 <div className="border-t border-gray-100 dark:border-dark-800 pt-3 mt-3 flex gap-2">
                   <Link href="/login" onClick={() => setMenuOpen(false)} className="btn-outline btn-md flex-1 justify-center">
                     Sign In

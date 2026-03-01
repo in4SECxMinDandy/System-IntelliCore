@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { 
-  LocalShipping, Add, Remove, MyLocation, 
-  Navigation, ZoomIn, ZoomOut 
+  Truck, Plus, Minus, MapPin, 
+  Compass, ZoomIn, ZoomOut 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -41,7 +41,7 @@ export default function MapView({
         <div className="relative">
           <div className="absolute inset-0 bg-primary-500 rounded-full animate-ping opacity-75" />
           <div className="relative w-12 h-12 bg-stitch-bg rounded-full border-2 border-primary-500 flex items-center justify-center text-primary-500 shadow-[0_0_30px_rgba(242,127,13,0.6)]">
-            <LocalShipping className="w-6 h-6" />
+            <Truck className="w-6 h-6" />
           </div>
         </div>
         <div className="bg-stitch-bg/90 backdrop-blur-sm px-3 py-1 rounded-md border border-stitch-border shadow-xl">
@@ -63,16 +63,16 @@ export default function MapView({
           onClick={() => setZoom(z => Math.min(z + 0.25, 2))}
           className="w-10 h-10 bg-stitch-surface text-white rounded-lg shadow-lg flex items-center justify-center hover:bg-stitch-border transition-colors"
         >
-          <Add className="w-5 h-5" />
+          <Plus className="w-5 h-5" />
         </button>
         <button 
           onClick={() => setZoom(z => Math.max(z - 0.25, 0.5))}
           className="w-10 h-10 bg-stitch-surface text-white rounded-lg shadow-lg flex items-center justify-center hover:bg-stitch-border transition-colors"
         >
-          <Remove className="w-5 h-5" />
+          <Minus className="w-5 h-5" />
         </button>
         <button className="w-10 h-10 bg-stitch-surface text-white rounded-lg shadow-lg flex items-center justify-center hover:bg-stitch-border transition-colors">
-          <MyLocation className="w-5 h-5" />
+          <MapPin className="w-5 h-5" />
         </button>
       </div>
     </div>

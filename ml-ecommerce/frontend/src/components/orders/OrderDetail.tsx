@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { LocationOn, Call, CreditCard, Star } from 'lucide-react';
+import { MapPin, Phone, CreditCard, Star } from 'lucide-react';
 
 interface OrderItem {
   id: string;
@@ -73,7 +73,7 @@ export function OrderDetail({ items, shippingAddress, payment, showRating = fals
       <div className="bg-surface-light dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Shipping Details</h3>
         <div className="flex gap-3 mb-4">
-          <LocationOn className="w-5 h-5 text-gray-400 mt-0.5" />
+          <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
           <div>
             <p className="text-sm font-bold text-gray-900 dark:text-white">{shippingAddress.label}</p>
             <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
@@ -85,7 +85,7 @@ export function OrderDetail({ items, shippingAddress, payment, showRating = fals
         </div>
         {shippingAddress.phone && (
           <div className="flex gap-3">
-            <Call className="w-5 h-5 text-gray-400 mt-0.5" />
+            <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
             <div>
               <p className="text-sm font-bold text-gray-900 dark:text-white">Contact Info</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">{shippingAddress.phone}</p>

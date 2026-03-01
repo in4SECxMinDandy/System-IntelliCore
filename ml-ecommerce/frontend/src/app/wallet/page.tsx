@@ -5,13 +5,13 @@ import Link from 'next/link';
 import { 
   Wallet, CreditCard, Plus, ArrowUpRight, ArrowDownLeft,
   TrendingUp, Gift, History, Settings, Bell,
-  DollarSign, Euro, Pound, Bitcoin, Shield
+  DollarSign, Euro, Bitcoin, Shield, CircleDollarSign
 } from 'lucide-react';
 
 const currencies = [
   { symbol: '$', name: 'USD', balance: 1250.00, icon: DollarSign, color: 'text-green-400' },
   { symbol: '€', name: 'EUR', balance: 850.50, icon: Euro, color: 'text-blue-400' },
-  { symbol: '£', name: 'GBP', balance: 420.00, icon: Pound, color: 'text-purple-400' },
+  { symbol: '£', name: 'GBP', balance: 420.00, icon: CircleDollarSign, color: 'text-purple-400' },
   { symbol: '₿', name: 'BTC', balance: 0.025, icon: Bitcoin, color: 'text-orange-400' },
 ];
 

@@ -13,8 +13,8 @@ import { formatPrice } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 // Material Symbols icon component
-const MaterialIcon = ({ icon, className = '' }: { icon: string; className?: string }) => (
-  <span className={`material-symbols-outlined ${className}`}>{icon}</span>
+const MaterialIcon = ({ icon, className, children }: { icon?: string; className?: string; children?: React.ReactNode }) => (
+  <span className={`material-symbols-outlined ${className}`}>{icon || children}</span>
 );
 
 interface OrderItem {

@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Plus, Minus, LocalShipping } from 'lucide-react';
+import { Plus, Minus, Truck } from 'lucide-react';
 
 interface MapViewProps {
   driverName?: string;
@@ -30,7 +30,7 @@ export default function MapView({ driverName = 'Michael D.', className }: MapVie
         <div className="relative">
           <div className="absolute inset-0 bg-primary-500 rounded-full animate-ping opacity-75" />
           <div className="relative w-12 h-12 bg-gray-900 rounded-full border-2 border-primary-500 flex items-center justify-center text-primary-500 shadow-[0_0_30px_rgba(242,127,13,0.6)]">
-            <LocalShipping className="w-6 h-6" />
+            <Truck className="w-6 h-6" />
           </div>
         </div>
         <div className="bg-gray-900/90 backdrop-blur-sm px-3 py-1 rounded-md border border-gray-700 shadow-xl">
