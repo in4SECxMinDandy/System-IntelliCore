@@ -8,8 +8,8 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
 // Material Symbols icon component
-const MaterialIcon = ({ icon, className = '' }: { icon: string; className?: string }) => (
-  <span className={`material-symbols-outlined ${className}`}>{icon}</span>
+const MaterialIcon = ({ icon, className = '', children }: { icon?: string; className?: string; children?: React.ReactNode }) => (
+  <span className={`material-symbols-outlined ${className}`}>{icon || children}</span>
 );
 
 const ratingLabels: Record<number, string> = {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import {
@@ -18,6 +18,13 @@ const tabs = [
   { id: 'challenges', label: 'Challenges', icon: Trophy },
   { id: 'leaderboard', label: 'Leaderboard', icon: TrendingUp },
 ];
+
+// Simple number formatter to avoid hydration mismatch
+const formatNumber = (num: number): string => {
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+  return num.toString();
+};
 
 const mockPosts = [
   {
@@ -152,6 +159,15 @@ const mockForumTopics = [
 export default function CommunityPage() {
   const [activeTab, setActiveTab] = useState('feed');
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+
+  // Check sessionStorage for initial tab (from community sub-routes)
+  useEffect(() => {
+    const savedTab = sessionStorage.getItem('community_active_tab');
+    if (savedTab && ['feed', 'forum', 'challenges', 'leaderboard'].includes(savedTab)) {
+      setActiveTab(savedTab);
+      sessionStorage.removeItem('community_active_tab');
+    }
+  }, []);
 
   const toggleLike = (postId: string) => {
     setLikedPosts(prev => {
@@ -382,7 +398,7 @@ export default function CommunityPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{member.name}</p>
-                      <p className="text-xs text-gray-400 dark:text-gray-500">{member.points.toLocaleString()} pts</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">{formatNumber(member.points)} pts</p>
                     </div>
                     <span className="text-lg">{member.badge}</span>
                   </div>
@@ -472,7 +488,7 @@ export default function CommunityPage() {
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-500 dark:text-gray-400">Participants</span>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">{challenge.participants.toLocaleString()}</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{formatNumber(challenge.participants)}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-500 dark:text-gray-400">Prize</span>
@@ -519,7 +535,7 @@ export default function CommunityPage() {
                   <p className="text-xs text-gray-400 dark:text-gray-500">{member.reviews} reviews · {member.purchases} purchases</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-primary-600 dark:text-primary-400">{member.points.toLocaleString()}</p>
+                  <p className="font-bold text-primary-600 dark:text-primary-400">{formatNumber(member.points)}</p>
                   <p className="text-xs text-gray-400 dark:text-gray-500">points</p>
                 </div>
                 <button className="btn-outline btn-sm">Follow</button>

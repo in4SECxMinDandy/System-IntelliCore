@@ -31,8 +31,21 @@ const navLinks = [
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => setMounted(true), []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   if (!mounted) return <div className="w-9 h-9" />;
 
@@ -46,30 +59,37 @@ function ThemeToggle() {
   const Icon = current.icon;
 
   return (
-    <div className="relative group">
+    <div className="relative" ref={dropdownRef}>
       <button
         className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-800 transition-colors"
         aria-label="Toggle theme"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen(!isOpen)}
       >
         <Icon className="w-4 h-4" />
       </button>
-      <div className="absolute right-0 top-full mt-1 bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-700 rounded-xl shadow-lg py-1 w-36 hidden group-hover:block z-50 animate-slide-down">
-        {themes.map(({ value, icon: ThemeIcon, label }) => (
-          <button
-            key={value}
-            onClick={() => setTheme(value)}
-            className={cn(
-              'flex items-center gap-2 w-full px-3 py-2 text-sm transition-colors',
-              theme === value
-                ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20'
-                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-dark-700'
-            )}
-          >
-            <ThemeIcon className="w-4 h-4" />
-            {label}
-          </button>
-        ))}
-      </div>
+      {isOpen && (
+        <div className="absolute right-0 top-full mt-1 bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-700 rounded-xl shadow-lg py-1 w-36 z-50 animate-slide-down">
+          {themes.map(({ value, icon: ThemeIcon, label }) => (
+            <button
+              key={value}
+              onClick={() => {
+                setTheme(value);
+                setIsOpen(false);
+              }}
+              className={cn(
+                'flex items-center gap-2 w-full px-3 py-2 text-sm transition-colors',
+                theme === value
+                  ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-dark-700'
+              )}
+            >
+              <ThemeIcon className="w-4 h-4" />
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -84,7 +104,11 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [notifCount] = useState(3); // Mock notification count
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+  const categoriesRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -97,6 +121,20 @@ export default function Navbar() {
       searchRef.current.focus();
     }
   }, [searchOpen]);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (categoriesRef.current && !categoriesRef.current.contains(event.target as Node)) {
+        setCategoriesOpen(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,7 +151,7 @@ export default function Navbar() {
     <>
       <nav
         className={cn(
-          'sticky top-0 z-50 transition-all duration-300',
+          'sticky top-0 z-[60] transition-all duration-300',
           scrolled
             ? 'bg-white/95 dark:bg-dark-950/95 backdrop-blur-md shadow-md'
             : 'bg-white dark:bg-dark-950 border-b border-gray-100 dark:border-dark-800'
@@ -133,12 +171,16 @@ export default function Navbar() {
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1">
               {/* Categories Mega Menu */}
-              <div className="relative group">
-                <button className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-dark-800 transition-colors">
+              <div className="relative" ref={categoriesRef}>
+                <button
+                  onClick={() => setCategoriesOpen(!categoriesOpen)}
+                  className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-dark-800 transition-colors"
+                >
                   Categories
-                  <ChevronDown className="w-3 h-3 transition-transform group-hover:rotate-180" />
+                  <ChevronDown className={cn('w-3 h-3 transition-transform', categoriesOpen && 'rotate-180')} />
                 </button>
-                <div className="absolute left-0 top-full mt-1 bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-700 rounded-2xl shadow-xl p-4 w-72 hidden group-hover:block z-50 animate-slide-down">
+                {categoriesOpen && (
+                  <div className="absolute left-0 top-full mt-1 bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-700 rounded-2xl shadow-xl p-4 w-72 z-50 animate-slide-down">
                   <div className="grid grid-cols-2 gap-1">
                     {categories.map((cat) => (
                       <Link
@@ -160,6 +202,7 @@ export default function Navbar() {
                     </Link>
                   </div>
                 </div>
+                )}
               </div>
 
               {navLinks.map((link) => (
@@ -243,17 +286,21 @@ export default function Navbar() {
 
               {/* User Menu */}
               {isAuthenticated ? (
-                <div className="relative group">
-                  <button className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-800 transition-colors">
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-800 transition-colors"
+                  >
                     <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center text-white text-xs font-bold">
                       {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
                     </div>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden md:block">
                       {user?.fullName?.split(' ')[0] || 'Account'}
                     </span>
-                    <ChevronDown className="w-3 h-3 text-gray-400 hidden md:block transition-transform group-hover:rotate-180" />
+                    <ChevronDown className={cn('w-3 h-3 text-gray-400 hidden md:block transition-transform', userMenuOpen && 'rotate-180')} />
                   </button>
-                  <div className="absolute right-0 top-full mt-1 bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-700 rounded-xl shadow-xl py-2 w-52 hidden group-hover:block z-50 animate-slide-down">
+                  {userMenuOpen && (
+                  <div className="absolute right-0 top-full mt-1 bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-700 rounded-xl shadow-xl py-2 w-52 z-50 animate-slide-down">
                     <div className="px-4 py-2 border-b border-gray-100 dark:border-dark-700 mb-1">
                       <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user?.fullName}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
@@ -287,6 +334,7 @@ export default function Navbar() {
                       </button>
                     </div>
                   </div>
+                  )}
                 </div>
               ) : (
                 <div className="flex items-center gap-2">

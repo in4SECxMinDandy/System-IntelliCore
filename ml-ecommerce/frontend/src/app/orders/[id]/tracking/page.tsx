@@ -10,22 +10,12 @@ import {
 import { useAuthStore } from '@/store/authStore';
 import api from '@/lib/api';
 import { formatPrice } from '@/lib/utils';
-import OrderTrackingStepper, { OrderTrackingMap } from '@/components/OrderTrackingStepper';
+import OrderTrackingStepper, { OrderTrackingMap, TrackingStep } from '@/components/OrderTrackingStepper';
 
 // Material Symbols icon component
-const MaterialIcon = ({ icon, className = '' }: { icon: string; className?: string }) => (
-  <span className={`material-symbols-outlined ${className}`}>{icon}</span>
+const MaterialIcon = ({ icon, className = '', children }: { icon?: string; className?: string; children?: React.ReactNode }) => (
+  <span className={`material-symbols-outlined ${className}`}>{icon || children}</span>
 );
-
-interface TrackingStep {
-    id: string;
-    label: string;
-    description: string;
-    timestamp?: string;
-    isCompleted: boolean;
-    isActive: boolean;
-    isPending: boolean;
-}
 
 interface OrderData {
     id: string;
@@ -62,7 +52,7 @@ const buildSteps = (status: string, createdAt: string): TrackingStep[] => {
     return [
         {
             id: 'placed', 
-            label: 'Order Placed', 
+            title: 'Order Placed', 
             description: 'Your order has been received',
             timestamp: fmt(base),
             isCompleted: idx >= 0,
@@ -71,7 +61,7 @@ const buildSteps = (status: string, createdAt: string): TrackingStep[] => {
         },
         {
             id: 'processing', 
-            label: 'Processing', 
+            title: 'Processing', 
             description: 'Warehouse is preparing your items',
             timestamp: fmt(new Date(base.getTime() + 4 * 3600000)),
             isCompleted: idx >= 1,
@@ -80,7 +70,7 @@ const buildSteps = (status: string, createdAt: string): TrackingStep[] => {
         },
         {
             id: 'shipped', 
-            label: 'Out for Delivery', 
+            title: 'Out for Delivery', 
             description: 'On the way to your location',
             timestamp: fmt(new Date(base.getTime() + 24 * 3600000)),
             isCompleted: idx >= 2,
@@ -89,7 +79,7 @@ const buildSteps = (status: string, createdAt: string): TrackingStep[] => {
         },
         {
             id: 'delivered', 
-            label: 'Delivered', 
+            title: 'Delivered', 
             description: 'Estimated delivery today by 6:00 PM',
             timestamp: 'Estimated today',
             isCompleted: idx >= 3,

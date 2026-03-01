@@ -47,8 +47,8 @@ const STATUS_META: Record<string, { label: string; color: string; bg: string; bo
   cancelled: { label: 'Cancelled', color: 'text-red-400', bg: 'bg-red-500/20', border: 'border-red-500/30' },
 };
 
-const MaterialIcon = ({ icon, className = '' }: { icon: string; className?: string }) => (
-  <span className={`material-symbols-outlined ${className}`}>{icon}</span>
+const MaterialIcon = ({ icon, className = '', children }: { icon?: string; className?: string; children?: React.ReactNode }) => (
+  <span className={`material-symbols-outlined ${className}`}>{icon || children}</span>
 );
 
 export default function OrdersPage() {
@@ -193,7 +193,8 @@ export default function OrdersPage() {
         {/* Sidebar */}
         <OrderSidebar 
           user={{
-            name: user?.name || 'Jane Doe',
+            name: user?.fullName || 'Jane Doe',
+            avatar: user?.avatarUrl,
             membership: 'Platinum Member'
           }}
         />

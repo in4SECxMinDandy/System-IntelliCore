@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 
-interface TrackingStep {
+export interface TrackingStep {
   id: string;
   title: string;
   description: string;

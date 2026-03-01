@@ -4,14 +4,14 @@ Recommendation API Endpoints
 
 from fastapi import APIRouter, Request, Query
 from typing import Optional, List
-from services.recommender import RecommenderService
+from services.recommender import HybridRecommender
 
 router = APIRouter()
 
 
-def get_recommender(request: Request) -> RecommenderService:
+def get_recommender(request: Request) -> HybridRecommender:
     mm = request.app.state.model_manager
-    return RecommenderService(mm)
+    return HybridRecommender()
 
 
 @router.get("/user")

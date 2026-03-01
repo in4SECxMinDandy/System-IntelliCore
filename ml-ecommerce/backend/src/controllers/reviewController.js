@@ -17,6 +17,25 @@ exports.listByProduct = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+exports.listByUser = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
+    const [reviews, total] = await Promise.all([
+      prisma.review.findMany({
+        where: { userId: req.user.id },
+        include: { 
+          product: { select: { id: true, name: true, slug: true, images: true } }
+        },
+        orderBy: { createdAt: 'desc' },
+        skip, take: Number(limit),
+      }),
+      prisma.review.count({ where: { userId: req.user.id } }),
+    ]);
+    res.json({ success: true, data: reviews, pagination: { page: Number(page), limit: Number(limit), total } });
+  } catch (err) { next(err); }
+};
+
 exports.create = async (req, res, next) => {
   try {
     const { productId, orderId, rating, buildQuality, deliverySpeed, valueForMoney, title, content, images, sentiment, fakeProb } = req.body;
