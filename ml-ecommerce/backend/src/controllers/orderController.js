@@ -50,6 +50,23 @@ exports.create = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Order must have at least one item' });
     }
 
+    // Validate productId format (must be valid UUID)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    for (const item of items) {
+      if (!item.productId || !uuidRegex.test(item.productId)) {
+        return res.status(400).json({ 
+          success: false, 
+          message: `Invalid product ID format: ${item.productId}. Expected UUID.` 
+        });
+      }
+      if (!item.quantity || item.quantity < 1) {
+        return res.status(400).json({ 
+          success: false, 
+          message: `Invalid quantity for product ${item.productId}` 
+        });
+      }
+    }
+
     // Fetch products and calculate totals
     const productIds = items.map(i => i.productId);
     const products = await prisma.product.findMany({
