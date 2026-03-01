@@ -83,12 +83,25 @@ export default function OrderDetailPage() {
             router.push('/login');
             return;
         }
-        
-        // Use mock data for demo
-        setTimeout(() => {
-            setOrder({ ...mockOrder, id: id || mockOrder.id });
-            setLoading(false);
-        }, 500);
+
+        const fetchOrder = async () => {
+            setLoading(true);
+            try {
+                const { data } = await api.get(`/orders/${id}`);
+                setOrder(data.data);
+                setError('');
+            } catch (err: any) {
+                console.error('Failed to fetch order:', err);
+                // Fallback to mock data if API fails
+                setOrder({ ...mockOrder, id: id || mockOrder.id });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchOrder();
+        }
     }, [id, isAuthenticated, router]);
 
     if (loading) {
