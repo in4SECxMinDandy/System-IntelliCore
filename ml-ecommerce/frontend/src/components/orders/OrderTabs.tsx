@@ -2,13 +2,16 @@
 
 import { OrderStatus } from './OrderCard';
 
+// Tab status type - includes both backend status and frontend tab states
+export type OrderTabId = OrderStatus | 'all' | 'to_pay' | 'to_ship' | 'to_receive';
+
 interface OrderTabsProps {
-  activeTab: OrderStatus;
-  onTabChange: (tab: OrderStatus) => void;
-  counts?: Record<OrderStatus, number>;
+  activeTab: OrderTabId;
+  onTabChange: (tab: OrderTabId) => void;
+  counts?: Record<OrderTabId, number>;
 }
 
-const tabs: { id: OrderStatus; label: string }[] = [
+const tabs: { id: OrderTabId; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'to_pay', label: 'To Pay' },
   { id: 'to_ship', label: 'To Ship' },

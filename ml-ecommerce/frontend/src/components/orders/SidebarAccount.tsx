@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-  Person, ShoppingBag, Favorite, AccountBalanceWallet, LocationOn, Settings 
+  User, ShoppingBag, Heart, Wallet, MapPin, Settings 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -17,11 +17,11 @@ interface SidebarAccountProps {
 }
 
 const menuItems = [
-  { icon: Person, label: 'My Profile', href: '/profile' },
+  { icon: User, label: 'My Profile', href: '/profile' },
   { icon: ShoppingBag, label: 'My Orders', href: '/orders', active: true },
-  { icon: Favorite, label: 'Wishlist', href: '/wishlist' },
-  { icon: AccountBalanceWallet, label: 'Payment Methods', href: '/profile' },
-  { icon: LocationOn, label: 'Address Book', href: '/profile' },
+  { icon: Heart, label: 'Wishlist', href: '/wishlist' },
+  { icon: Wallet, label: 'Payment Methods', href: '/profile' },
+  { icon: MapPin, label: 'Address Book', href: '/profile' },
   { icon: Settings, label: 'Settings', href: '/profile' },
 ];
 

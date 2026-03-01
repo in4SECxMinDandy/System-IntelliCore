@@ -6,6 +6,9 @@ const { authenticate, authorize, optionalAuth } = require('../middleware/auth');
 router.get('/', optionalAuth, productController.list);
 router.get('/featured', productController.featured);
 router.get('/search', optionalAuth, productController.search);
+router.get('/advanced-search', optionalAuth, productController.advancedSearch);
+router.get('/filters', productController.getFilters);
+router.get('/compare', productController.compare);
 router.get('/:slug', optionalAuth, productController.getBySlug);
 
 // Admin routes

@@ -1,7 +1,7 @@
 'use client';
 
 import { 
-  CheckCircle, Package, LocalShipping, Home, 
+  CheckCircle, Package, Truck, Home, 
   Circle, ChevronRight 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -38,7 +38,7 @@ function Step({ step, index, isLast }: StepProps) {
           </div>
         ) : step.isActive ? (
           <div className="z-10 flex items-center justify-center w-10 h-10 -ml-1 rounded-full bg-stitch-bg border-2 border-primary-500 text-primary-500 shadow-[0_0_20px_rgba(242,127,13,0.4)] animate-pulse">
-            <LocalShipping className="w-5 h-5" />
+            <Truck className="w-5 h-5" />
           </div>
         ) : (
           <div className="z-10 flex items-center justify-center w-8 h-8 rounded-full bg-stitch-surface text-stitch-muted">

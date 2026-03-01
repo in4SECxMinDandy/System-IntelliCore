@@ -93,7 +93,7 @@ export function OrderHeader({ showBack, backHref = '/orders', title }: OrderHead
           {isAuthenticated && user ? (
             <div 
               className="size-10 rounded-full bg-cover bg-center border-2 border-primary"
-              style={{ backgroundImage: `url(${user.avatar || 'https://lh3.googleusercontent.com/aida-public/AB6AXuB62muIiUcro64wN3fRUdO1c7vCKbYlML21GKFAXu4gRRAVs7wKvKPLvonCdOniM0UQQl0S40KyHrY-IYgkTBFATIZzVlD4WwllWPuRVQhjIplC-c7ih75JNdPllfxWaDVR1g4pK5Ao-RwsxVShhfVlEVVoGJlRAUR3c4-PqYON_JTZSK4fBb50OxWwcWO9WAVAfDyVPSdB27ZfCmYHxCTi-HyxLcsgXtIqd9NdNT3XHgK8HavBXmI2yqPYqIUgFXYGEoaZz93wEJE'})` }}
+              style={{ backgroundImage: `url(${user.avatarUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuB62muIiUcro64wN3fRUdO1c7vCKbYlML21GKFAXu4gRRAVs7wKvKPLvonCdOniM0UQQl0S40KyHrY-IYgkTBFATIZzVlD4WwllWPuRVQhjIplC-c7ih75JNdPllfxWaDVR1g4pK5Ao-RwsxVShhfVlEVVoGJlRAUR3c4-PqYON_JTZSK4fBb50OxWwcWO9WAVAfDyVPSdB27ZfCmYHxCTi-HyxLcsgXtIqd9NdNT3XHgK8HavBXmI2yqPYqIUgFXYGEoaZz93wEJE'})` }}
             />
           ) : (
             <Link 

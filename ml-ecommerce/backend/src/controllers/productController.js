@@ -185,3 +185,255 @@ exports.remove = async (req, res, next) => {
     next(err);
   }
 };
+
+// ==========================================
+// Advanced Search with Filters
+// ==========================================
+
+exports.advancedSearch = async (req, res, next) => {
+  try {
+    const {
+      q = '',
+      page = 1,
+      limit = 20,
+      // Category filters
+      categories,
+      brands,
+      // Price filters
+      minPrice,
+      maxPrice,
+      // Rating filter
+      minRating,
+      // Stock filter
+      inStock,
+      // Availability
+      isFeatured,
+      isNew,
+      onSale,
+      // Sort options
+      sort = 'relevance',
+      order = 'desc',
+      // Tags
+      tags,
+    } = req.query;
+
+    const skip = (Number(page) - 1) * Number(limit);
+    const where = { isActive: true };
+
+    // Text search
+    if (q) {
+      where.OR = [
+        { name: { contains: q, mode: 'insensitive' } },
+        { shortDescription: { contains: q, mode: 'insensitive' } },
+        { description: { contains: q, mode: 'insensitive' } },
+        { tags: { hasSome: q.split(' ').filter(Boolean) } },
+        { brand: { name: { contains: q, mode: 'insensitive' } } },
+        { category: { name: { contains: q, mode: 'insensitive' } } },
+      ];
+    }
+
+    // Category filter
+    if (categories) {
+      const categoryList = categories.split(',');
+      where.category = { slug: { in: categoryList } };
+    }
+
+    // Brand filter
+    if (brands) {
+      const brandList = brands.split(',');
+      where.brand = { slug: { in: brandList } };
+    }
+
+    // Price filter
+    if (minPrice || maxPrice) {
+      where.basePrice = {};
+      if (minPrice) where.basePrice.gte = Number(minPrice);
+      if (maxPrice) where.basePrice.lte = Number(maxPrice);
+    }
+
+    // Rating filter
+    if (minRating) {
+      where.averageRating = { gte: Number(minRating) };
+    }
+
+    // Stock filter
+    if (inStock === 'true') {
+      where.stockQuantity = { gt: 0 };
+    }
+
+    // Special filters
+    if (isFeatured === 'true') where.isFeatured = true;
+    if (onSale === 'true') {
+      where.salePrice = { not: null };
+    }
+
+    // Tags filter
+    if (tags) {
+      const tagList = tags.split(',');
+      where.tags = { hasSome: tagList };
+    }
+
+    // Sort mapping
+    const sortOptions = {
+      relevance: { viewCount: 'desc' },
+      price_asc: { basePrice: 'asc' },
+      price_desc: { basePrice: 'desc' },
+      newest: { createdAt: 'desc' },
+      popular: { purchaseCount: 'desc' },
+      rating: { averageRating: 'desc' },
+    };
+
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        where,
+        skip,
+        take: Number(limit),
+        select: {
+          ...PRODUCT_SELECT,
+          description: true,
+          averageRating: true,
+          reviewCount: true,
+        },
+        orderBy: sortOptions[sort] || { createdAt: 'desc' },
+      }),
+      prisma.product.count({ where }),
+    ]);
+
+    res.json({
+      success: true,
+      data: products,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        pages: Math.ceil(total / Number(limit)),
+      },
+      filters: {
+        q,
+        categories: categories?.split(',') || [],
+        brands: brands?.split(',') || [],
+        minPrice: Number(minPrice) || 0,
+        maxPrice: Number(maxPrice) || null,
+        minRating: Number(minRating) || 0,
+        inStock: inStock === 'true',
+        isFeatured: isFeatured === 'true',
+        onSale: onSale === 'true',
+        sort,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Get all filter options (categories, brands, price range, etc.)
+exports.getFilters = async (req, res, next) => {
+  try {
+    const cacheKey = 'products:filters';
+    const cached = await cacheGet(cacheKey);
+    if (cached) return res.json({ success: true, data: cached });
+
+    const [categories, brands, priceRange, tags, ratingStats] = await Promise.all([
+      prisma.category.findMany({
+        where: { isActive: true },
+        select: { id: true, name: true, slug: true, imageUrl: true },
+        orderBy: { name: 'asc' },
+      }),
+      prisma.brand.findMany({
+        where: { isActive: true },
+        select: { id: true, name: true, slug: true, logoUrl: true },
+        orderBy: { name: 'asc' },
+      }),
+      prisma.product.aggregate({
+        where: { isActive: true },
+        _min: { basePrice: true },
+        _max: { basePrice: true },
+      }),
+      prisma.product.findMany({
+        where: { isActive: true },
+        select: { tags: true },
+        take: 100,
+      }),
+      prisma.product.aggregate({
+        where: { isActive: true },
+        _avg: { averageRating: true },
+        _count: { id: true },
+      }),
+    ]);
+
+    // Extract unique tags
+    const allTags = [...new Set(tags.flatMap((p) => p.tags))].slice(0, 50);
+
+    const filters = {
+      categories,
+      brands,
+      priceRange: {
+        min: priceRange._min.basePrice || 0,
+        max: priceRange._max.basePrice || 1000,
+      },
+      tags: allTags,
+      ratings: [5, 4, 3, 2, 1],
+      stats: {
+        avgRating: ratingStats._avg.averageRating || 0,
+        totalProducts: ratingStats._count.id,
+      },
+    };
+
+    await cacheSet(cacheKey, filters, 600);
+    res.json({ success: true, data: filters });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Compare products
+exports.compare = async (req, res, next) => {
+  try {
+    const { ids } = req.query;
+    if (!ids) {
+      return res.status(400).json({ success: false, message: 'Product IDs required' });
+    }
+
+    const productIds = ids.split(',').slice(0, 4); // Max 4 products
+    const products = await prisma.product.findMany({
+      where: { id: { in: productIds }, isActive: true },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        basePrice: true,
+        salePrice: true,
+        stockQuantity: true,
+        averageRating: true,
+        reviewCount: true,
+        description: true,
+        tags: true,
+        weight: true,
+        dimensions: true,
+        category: { select: { name: true, slug: true } },
+        brand: { select: { name: true, slug: true, logoUrl: true } },
+        images: { select: { url: true, isPrimary: true }, orderBy: { sortOrder: 'asc' }, take: 5 },
+        attributes: true,
+      },
+    });
+
+    // Get similar products for comparison
+    if (products.length > 0) {
+      const categoryId = products[0].category?.id;
+      const similarProducts = await prisma.product.findMany({
+        where: {
+          isActive: true,
+          categoryId,
+          id: { notIn: productIds },
+        },
+        select: { id: true, name: true, slug: true, images: { select: { url: true }, take: 1 } },
+        take: 5,
+      });
+      return res.json({ success: true, data: { products, similarProducts } });
+    }
+
+    res.json({ success: true, data: { products, similarProducts: [] } });
+  } catch (err) {
+    next(err);
+  }
+};

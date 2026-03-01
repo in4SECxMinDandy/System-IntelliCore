@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle, Close, AlertTriangle, Frown, TrendingUp, TrendingDown } from 'lucide-react';
+import { CheckCircle, X as CloseIcon, AlertTriangle, Frown, TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import StarRating from './StarRating';
 
@@ -96,7 +96,7 @@ export default function ReviewModerationCard({
             onClick={() => onReject?.(review.id)}
             className="flex-1 py-1.5 rounded-lg bg-stitch-surface text-stitch-muted hover:bg-red-500 hover:text-white text-xs font-bold transition-colors flex items-center justify-center gap-1"
           >
-            <Close className="w-3 h-3" />
+            <CloseIcon className="w-3 h-3" />
             Reject
           </button>
           <button 

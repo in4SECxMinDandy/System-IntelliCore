@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { 
-  Stars, EditNote, Psychology, Add, 
-  CheckCircle, Send, Image as ImageIcon, CloudUpload 
+  Star, FileEdit, Brain, Plus, 
+  CheckCircle, Send, Image as ImageIcon, Cloud 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import StarRating from './StarRating';
@@ -109,8 +109,8 @@ export default function ReviewForm({
       <div className="lg:col-span-2 flex flex-col gap-8">
         {/* Multi-dimensional Rating */}
         <section className="bg-stitch-card rounded-xl p-6 border border-stitch-border shadow-lg">
-          <h3 className="text-white text-xl font-bold mb-6 flex items-center gap-2">
-            <Stars className="w-5 h-5 text-primary-500" />
+            <h3 className="text-white text-xl font-bold mb-6 flex items-center gap-2">
+            <Star className="w-5 h-5 text-primary-500" />
             Overall Rating
           </h3>
           <div className="space-y-6">
@@ -134,7 +134,7 @@ export default function ReviewForm({
         <section className="bg-stitch-card rounded-xl p-6 border border-stitch-border shadow-lg relative group focus-within:ring-1 focus-within:ring-primary-500/50 transition-all">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-white text-xl font-bold flex items-center gap-2">
-              <EditNote className="w-5 h-5 text-primary-500" />
+              <FileEdit className="w-5 h-5 text-primary-500" />
               Write your review
             </h3>
             <div className="flex items-center gap-1 bg-green-900/30 text-green-400 px-2 py-1 rounded text-xs border border-green-900/50">
@@ -165,7 +165,7 @@ export default function ReviewForm({
           {/* Smart Suggestions */}
           <div className="mt-4 pt-4 border-t border-stitch-border">
             <div className="flex items-center gap-2 mb-2">
-              <Psychology className="w-4 h-4 text-primary-500" />
+              <Brain className="w-4 h-4 text-primary-500" />
               <span className="text-xs text-stitch-muted uppercase tracking-wider font-bold">Smart Suggestions</span>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -175,7 +175,7 @@ export default function ReviewForm({
                   onClick={() => handleAddSuggestion(suggestion)}
                   className="text-xs bg-stitch-surface hover:bg-stitch-border text-white px-3 py-1.5 rounded-full border border-stitch-border transition-colors flex items-center gap-1 group/btn"
                 >
-                  <Add className="w-3 h-3 text-primary-500 group-hover/btn:scale-110 transition-transform" /> 
+                  <Plus className="w-3 h-3 text-primary-500 group-hover/btn:scale-110 transition-transform" /> 
                   {suggestion}
                 </button>
               ))}
@@ -204,7 +204,7 @@ export default function ReviewForm({
             />
             <label htmlFor="photo-upload" className="cursor-pointer flex flex-col items-center">
               <div className="bg-stitch-surface p-4 rounded-full mb-4 group-hover:scale-110 transition-transform">
-                <CloudUpload className="w-8 h-8 text-stitch-muted group-hover:text-primary-500 transition-colors" />
+                <Cloud className="w-8 h-8 text-stitch-muted group-hover:text-primary-500 transition-colors" />
               </div>
               <p className="text-white font-medium mb-1">Click or drag files here</p>
               <p className="text-xs text-stitch-muted mb-4">Supports JPG, PNG, MP4</p>
@@ -245,7 +245,7 @@ export default function ReviewForm({
               Verified Purchase
             </div>
             <div className="flex items-center gap-2 text-xs text-stitch-muted">
-              <Stars className="w-3 h-3 text-primary-500" />
+              <Star className="w-3 h-3 text-primary-500" />
               Public Profile
             </div>
           </div>

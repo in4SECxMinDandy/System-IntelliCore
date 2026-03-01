@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 from prometheus_client import make_asgi_app, Counter, Histogram
 import logging
 import time
+import os
 
 from routers import recommendations, health, training
 from routers.chatbot import router as chatbot_router
@@ -74,12 +75,16 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# Middleware
+# Middleware - CORS configuration
+# Get allowed origins from environment variable (comma-separated)
+# Default to localhost for development
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 

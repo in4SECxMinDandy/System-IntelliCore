@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { 
-  Person, ShoppingBag, Favorite, AccountBalanceWallet, 
-  LocationOn, AutoAwesome 
+  User, ShoppingBag, Heart, Wallet, 
+  MapPin, Sparkles 
 } from 'lucide-react';
 
 interface OrderSidebarProps {
@@ -22,11 +22,11 @@ interface OrderSidebarProps {
 }
 
 const menuItems = [
-  { id: 'profile', label: 'My Profile', icon: Person, href: '/profile' },
+  { id: 'profile', label: 'My Profile', icon: User, href: '/profile' },
   { id: 'orders', label: 'My Orders', icon: ShoppingBag, href: '/orders', active: true },
-  { id: 'wishlist', label: 'Wishlist', icon: Favorite, href: '/wishlist' },
-  { id: 'payment', label: 'Payment Methods', icon: AccountBalanceWallet, href: '/payment' },
-  { id: 'address', label: 'Address Book', icon: LocationOn, href: '/address' },
+  { id: 'wishlist', label: 'Wishlist', icon: Heart, href: '/wishlist' },
+  { id: 'payment', label: 'Payment Methods', icon: Wallet, href: '/payment' },
+  { id: 'address', label: 'Address Book', icon: MapPin, href: '/address' },
 ];
 
 export function OrderSidebar({ 
@@ -81,7 +81,7 @@ export function OrderSidebar({
       {recommendedItems.length > 0 && (
         <div className="bg-card-dark rounded-xl p-5 border border-border-dark">
           <div className="flex items-center gap-2 mb-4 text-primary">
-            <AutoAwesome className="w-5 h-5 fill-current" />
+            <Sparkles className="w-5 h-5 fill-current" />
             <h3 className="text-sm font-bold text-white uppercase tracking-wider">Recommended</h3>
           </div>
           <div className="flex flex-col gap-4">

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { 
-  AutoAwesome, CheckCircle, ArrowForward, Headphones, 
+  Sparkles, CheckCircle, ArrowRight, Headphones, 
   Verified 
 } from 'lucide-react';
 
@@ -87,11 +87,11 @@ export function ReturnForm({
       {policy && (
         <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-[#2e243d] dark:to-[#1e1a24] p-6 rounded-xl border border-indigo-100 dark:border-indigo-500/20 relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-4 opacity-10">
-            <AutoAwesome className="w-24 h-24" />
+            <Sparkles className="w-24 h-24" />
           </div>
           <div className="relative z-10 flex flex-col gap-3">
             <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
-              <AutoAwesome className="w-5 h-5" />
+              <Sparkles className="w-5 h-5" />
               <span className="text-sm font-bold uppercase tracking-wide">AI Policy Check</span>
             </div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -220,7 +220,7 @@ export function ReturnForm({
             className="w-full bg-primary hover:bg-primary-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-lg shadow-lg shadow-primary/20 transition-all mt-2 flex items-center justify-center gap-2 text-base tracking-wide"
           >
             <span>Request Refund</span>
-            <ArrowForward className="w-5 h-5" />
+            <ArrowRight className="w-5 h-5" />
           </button>
           
           <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-2">
