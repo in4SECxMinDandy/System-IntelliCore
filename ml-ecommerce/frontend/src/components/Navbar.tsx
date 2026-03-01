@@ -11,6 +11,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
+import LanguageSwitcher from './LanguageSwitcher';
 import { cn } from '@/lib/utils';
 
 const categories = [
@@ -254,6 +255,12 @@ export default function Navbar() {
 
               {/* Theme Toggle */}
               <ThemeToggle />
+
+              {/* Language Switcher */}
+              <LanguageSwitcher />
+
+              {/* Language Switcher */}
+              <LanguageSwitcher />
 
               {/* Wishlist */}
               <Link
