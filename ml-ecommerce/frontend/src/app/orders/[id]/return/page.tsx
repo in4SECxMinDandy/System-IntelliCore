@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
     ArrowLeft, CheckCircle, Package, Loader2,
-    AlertCircle, HeadphonesIcon, ChevronDown, ArrowRight
+    AlertCircle, HeadphonesIcon, ChevronDown, ArrowRight, Sparkles
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import api from '@/lib/api';

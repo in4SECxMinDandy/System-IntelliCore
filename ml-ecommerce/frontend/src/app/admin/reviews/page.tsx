@@ -7,8 +7,8 @@ import api from '@/lib/api';
 import toast from 'react-hot-toast';
 
 // Material Symbols icon component
-const MaterialIcon = ({ icon, className = '' }: { icon: string; className?: string }) => (
-  <span className={`material-symbols-outlined ${className}`}>{icon}</span>
+const MaterialIcon = ({ icon, className = '', children }: { icon?: string; className?: string; children?: React.ReactNode }) => (
+  <span className={`material-symbols-outlined ${className}`}>{children || icon}</span>
 );
 
 interface Review {

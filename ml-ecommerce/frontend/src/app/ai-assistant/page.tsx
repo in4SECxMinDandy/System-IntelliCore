@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { 
   Send, Bot, User, Sparkles, MessageSquare, 
   ThumbsUp, ThumbsDown, Share2, Copy, RefreshCw,
-  Image as ImageIcon, Mic, Paperclip, Search
+  Image as ImageIcon, Mic, Paperclip, Search, Package
 } from 'lucide-react';
 import Link from 'next/link';
 
