@@ -4,7 +4,7 @@
 
 const logger = require('../config/logger');
 
-function errorHandler(err, req, res, next) {
+function errorHandler(err, req, res, _next) {
   logger.error(err.message, { stack: err.stack, path: req.path });
 
   // Prisma errors

@@ -383,9 +383,6 @@ exports.getReviewQueue = async (req, res, next) => {
       })
     ]);
 
-    // calculate avg sentiment (mock logic based on rating if sentiment missing)
-    let avgSentiment = 0;
-
     res.json({
       success: true,
       data: {

@@ -147,7 +147,7 @@ exports.update = async (req, res, next) => {
       updateData[key] === undefined && delete updateData[key]
     );
 
-    const sale = await prisma.flashSale.update({
+    const _sale = await prisma.flashSale.update({
       where: { id },
       data: updateData,
       include: {

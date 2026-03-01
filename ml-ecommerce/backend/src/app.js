@@ -146,7 +146,7 @@ if (process.env.NODE_ENV !== 'production') {
 
     const swaggerSpec = swaggerJsdoc(swaggerOptions);
     app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-  } catch (e) {
+  } catch (_e) {
     // Swagger not available in production
   }
 }

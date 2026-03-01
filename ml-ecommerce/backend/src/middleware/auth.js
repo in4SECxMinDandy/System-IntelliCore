@@ -3,7 +3,6 @@
 // ==========================================
 
 const jwt = require('jsonwebtoken');
-const { prisma } = require('../config/database');
 
 function authenticate(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -16,7 +15,7 @@ function authenticate(req, res, next) {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     req.user = payload;
     next();
-  } catch (err) {
+  } catch (_err) {
     return res.status(401).json({ success: false, message: 'Invalid or expired token' });
   }
 }

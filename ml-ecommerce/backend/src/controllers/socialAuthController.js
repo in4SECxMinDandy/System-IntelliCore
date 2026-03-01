@@ -65,7 +65,7 @@ async function findOrCreateUser(provider, providerId, email, name, avatarUrl) {
 /**
  * Google OAuth - Exchange code for tokens
  */
-exports.googleCallback = async (req, res, next) => {
+exports.googleCallback = async (req, res, _next) => {
   try {
     const { code } = req.query;
 
@@ -133,7 +133,7 @@ exports.googleCallback = async (req, res, next) => {
 /**
  * Facebook OAuth - Exchange code for tokens
  */
-exports.facebookCallback = async (req, res, next) => {
+exports.facebookCallback = async (req, res, _next) => {
   try {
     const { code } = req.query;
 
@@ -251,7 +251,7 @@ exports.linkAccount = async (req, res, next) => {
       });
     }
 
-    let providerUserId, email, name, avatarUrl;
+    let providerUserId, _email, _name, avatarUrl;
 
     if (provider === 'google') {
       // Exchange code for tokens
@@ -276,8 +276,8 @@ exports.linkAccount = async (req, res, next) => {
 
       const googleUser = await userResponse.json();
       providerUserId = googleUser.id;
-      email = googleUser.email;
-      name = googleUser.name;
+      _email = googleUser.email;
+      _name = googleUser.name;
       avatarUrl = googleUser.picture;
     } else {
       // Facebook
@@ -295,8 +295,8 @@ exports.linkAccount = async (req, res, next) => {
       const fbUser = await userResponse.json();
 
       providerUserId = fbUser.id;
-      email = fbUser.email;
-      name = fbUser.name;
+      _email = fbUser.email;
+      _name = fbUser.name;
       avatarUrl = fbUser.picture?.data?.url;
     }
 

@@ -192,9 +192,6 @@ exports.createRefund = async (req, res, next) => {
  */
 exports.getPaymentMethods = async (req, res, next) => {
   try {
-    const userId = req.user.id;
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-
     // In production, store Stripe customer ID in user record
     // For now, return empty list
     res.json({ success: true, data: [] });

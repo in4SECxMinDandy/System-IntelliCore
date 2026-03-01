@@ -55,7 +55,7 @@ const FAQ_KNOWLEDGE_BASE = [
  */
 exports.processMessage = async (req, res, next) => {
   try {
-    const { message, history = [], sessionId } = req.body;
+    const { message, sessionId } = req.body;
     const userId = req.user?.id;
 
     if (!message || message.trim().length === 0) {

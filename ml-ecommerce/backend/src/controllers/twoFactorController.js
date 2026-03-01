@@ -100,7 +100,7 @@ exports.enable2FA = async (req, res, next) => {
 exports.disable2FA = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const { token, password } = req.body;
+    const { token, password: _password } = req.body;
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
 

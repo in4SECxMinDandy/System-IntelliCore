@@ -49,7 +49,7 @@ function initializeSocketIO(server) {
 
       socket.user = user;
       next();
-    } catch (error) {
+    } catch (_error) {
       // Allow connection but mark as unauthenticated
       socket.user = null;
       next();

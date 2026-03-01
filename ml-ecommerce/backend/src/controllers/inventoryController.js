@@ -265,14 +265,14 @@ exports.getInventoryLogs = async (req, res, next) => {
 exports.bulkUpdateStock = async (req, res, next) => {
   try {
     const { updates } = req.body;
-    const userId = req.user.id;
+    const _userId = req.user.id;
 
     if (!Array.isArray(updates) || updates.length === 0) {
       return res.status(400).json({ success: false, message: 'updates array is required' });
     }
 
     const results = await prisma.$transaction(
-      updates.map(({ productId, quantity, type, reason }) =>
+      updates.map(({ productId, quantity, type, reason: _reason }) =>
         prisma.product.update({
           where: { id: productId },
           data: { stockQuantity: type === 'restock' ? { increment: quantity } : quantity },
