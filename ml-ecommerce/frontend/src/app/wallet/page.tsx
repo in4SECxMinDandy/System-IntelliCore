@@ -5,13 +5,13 @@ import Link from 'next/link';
 import { 
   Wallet, CreditCard, Plus, ArrowUpRight, ArrowDownLeft,
   TrendingUp, Gift, History, Settings, Bell,
-  DollarSign, Euro, Pound, Bitcoin, Shield
+  DollarSign, Euro, Coins, Bitcoin, Shield
 } from 'lucide-react';
 
 const currencies = [
   { symbol: '$', name: 'USD', balance: 1250.00, icon: DollarSign, color: 'text-green-400' },
   { symbol: '€', name: 'EUR', balance: 850.50, icon: Euro, color: 'text-blue-400' },
-  { symbol: '£', name: 'GBP', balance: 420.00, icon: Pound, color: 'text-purple-400' },
+  { symbol: '£', name: 'GBP', balance: 420.00, icon: Coins, color: 'text-purple-400' },
   { symbol: '₿', name: 'BTC', balance: 0.025, icon: Bitcoin, color: 'text-orange-400' },
 ];
 
@@ -170,9 +170,9 @@ export default function DigitalWalletPage() {
                   <div key={method.id} className="p-4 flex items-center justify-between hover:bg-[#2D241B]/50 transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-8 bg-[#2D241B] rounded flex items-center justify-center">
-                        {method.type === 'visa' && <span className="text-blue-400 font-bold text-xs">VISA'}
-                        {method.type === 'mastercard' && <span className="text-red-400 font-bold text-xs">MC'}
-                        {method.type === 'paypal' && <span className="text-blue-300 font-bold text-xs">PayPal'}
+                        {method.type === 'visa' && <span className="text-blue-400 font-bold text-xs">VISA</span>}
+                        {method.type === 'mastercard' && <span className="text-red-400 font-bold text-xs">MC</span>}
+                        {method.type === 'paypal' && <span className="text-blue-300 font-bold text-xs">PayPal</span>}
                       </div>
                       <div>
                         <p className="text-sm text-white">
