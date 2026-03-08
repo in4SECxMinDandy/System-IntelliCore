@@ -38,8 +38,21 @@ async function cacheDel(key) {
 }
 
 async function cacheDelPattern(pattern) {
-  const keys = await getRedis().keys(pattern);
-  if (keys.length > 0) await getRedis().del(...keys);
+  // Use SCAN instead of KEYS for production safety
+  // KEYS command blocks Redis and is not recommended for production
+  const redis = getRedis();
+  const cursor = { cursor: 0 };
+  const keysToDelete = [];
+  
+  do {
+    const [newCursor, keys] = await redis.scan(cursor.cursor, 'MATCH', pattern, 'COUNT', 100);
+    cursor.cursor = newCursor;
+    keysToDelete.push(...keys);
+  } while (cursor.cursor !== '0');
+  
+  if (keysToDelete.length > 0) {
+    await redis.del(...keysToDelete);
+  }
 }
 
 module.exports = { connectRedis, getRedis, cacheGet, cacheSet, cacheDel, cacheDelPattern };

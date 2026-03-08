@@ -23,7 +23,7 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-ecommerce_user} -d ecommerce"]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-ecommerce_user} -d ecommerce" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -43,7 +43,7 @@ services:
     volumes:
       - redisdata:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis_pass}", "ping"]
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis_pass}", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -67,7 +67,7 @@ services:
       - mongodata:/data/db
       - ./scripts/init-mongo.js:/docker-entrypoint-initdb.d/init.js
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -82,20 +82,16 @@ services:
     container_name: intellicore_mlflow
     restart: unless-stopped
     command: >
-      mlflow server
-      --host 0.0.0.0
-      --port 5000
-      --backend-store-uri postgresql://${DB_USER:-ecommerce_user}:${DB_PASS:-ecommerce_pass}@postgres:5432/mlflow
-      --default-artifact-root /mlflow/artifacts
+      mlflow server --host 0.0.0.0 --port 5001 --backend-store-uri postgresql://${DB_USER:-ecommerce_user}:${DB_PASS:-ecommerce_pass}@postgres:5432/mlflow --default-artifact-root /mlflow/artifacts
     ports:
-      - "5000:5000"
+      - "5001:5001"
     volumes:
       - mlflowdata:/mlflow/artifacts
     depends_on:
       postgres:
         condition: service_healthy
     environment:
-      MLFLOW_TRACKING_URI: http://localhost:5000
+      MLFLOW_TRACKING_URI: http://localhost:5001
     networks:
       - intellicore_net
 
@@ -129,6 +125,8 @@ services:
       SMTP_USER: ${SMTP_USER:-}
       SMTP_PASS: ${SMTP_PASS:-}
       EMAIL_FROM: ${EMAIL_FROM:-noreply@intellicore.shop}
+      METRICS_TOKEN: ${METRICS_TOKEN:-}
+      ALLOWED_ORIGINS: ${FRONTEND_URL:-http://localhost:3000}
     volumes:
       - ./backend:/app
       - /app/node_modules
@@ -139,6 +137,12 @@ services:
         condition: service_healthy
       mongodb:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:4000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     networks:
       - intellicore_net
 
@@ -162,6 +166,7 @@ services:
       MLFLOW_TRACKING_URI: http://mlflow:5000
       MODEL_DIR: /app/models
       RETRAIN_INTERVAL_HOURS: ${RETRAIN_INTERVAL_HOURS:-24}
+      ALLOWED_ORIGINS: "${FRONTEND_URL:-http://localhost:3000},http://localhost:4000"
     volumes:
       - ./ml-service:/app
       - ml_models:/app/models
@@ -172,6 +177,12 @@ services:
         condition: service_healthy
       mlflow:
         condition: service_started
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8001/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     networks:
       - intellicore_net
 
@@ -234,8 +245,10 @@ services:
       - "3001:3000"
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS:-admin123}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS:-CHANGEME_strong_grafana_password}
       GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SECURITY_DISABLE_GRAVATAR: "true"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
       GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-simple-json-datasource
     volumes:
       - grafanadata:/var/lib/grafana
@@ -275,6 +288,7 @@ volumes:
   ml_models:
   prometheusdata:
   grafanadata:
+
 
 networks:
   intellicore_net:

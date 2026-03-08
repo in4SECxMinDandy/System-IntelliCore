@@ -50,32 +50,41 @@ exports.create = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Order must have at least one item' });
     }
 
-    // Validate productId format (must be valid UUID)
+    // UUID validation regex
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+    // Merge duplicate productId entries to prevent stock bypass
+    const mergedItemsMap = {};
     for (const item of items) {
       if (!item.productId || !uuidRegex.test(item.productId)) {
-        return res.status(400).json({ 
-          success: false, 
-          message: `Invalid product ID format: ${item.productId}. Expected UUID.` 
+        return res.status(400).json({
+          success: false,
+          message: `Invalid product ID format: ${item.productId}. Expected UUID.`
         });
       }
       if (!item.quantity || item.quantity < 1) {
-        return res.status(400).json({ 
-          success: false, 
-          message: `Invalid quantity for product ${item.productId}` 
+        return res.status(400).json({
+          success: false,
+          message: `Invalid quantity for product ${item.productId}`
         });
       }
+      if (mergedItemsMap[item.productId]) {
+        mergedItemsMap[item.productId].quantity += item.quantity;
+      } else {
+        mergedItemsMap[item.productId] = { ...item };
+      }
     }
+    const mergedItems = Object.values(mergedItemsMap);
 
     // Fetch products and calculate totals
-    const productIds = items.map(i => i.productId);
+    const productIds = mergedItems.map(i => i.productId);
     const products = await prisma.product.findMany({
       where: { id: { in: productIds }, isActive: true },
     });
 
     const productMap = Object.fromEntries(products.map(p => [p.id, p]));
     let subtotal = 0;
-    const orderItems = items.map(item => {
+    const orderItems = mergedItems.map(item => {
       const product = productMap[item.productId];
       if (!product) throw Object.assign(new Error(`Product ${item.productId} not found`), { status: 400 });
       const unitPrice = Number(product.salePrice || product.basePrice);
@@ -94,20 +103,70 @@ exports.create = async (req, res, next) => {
     const shippingFee = subtotal >= 500000 ? 0 : 30000;
     const totalAmount = subtotal + shippingFee;
 
-    const order = await prisma.order.create({
-      data: {
-        userId: req.user.id,
-        orderNumber: generateOrderNumber(),
-        shippingAddress,
-        paymentMethod,
-        couponCode,
-        notes,
-        subtotal,
-        shippingFee,
-        totalAmount,
-        orderItems: { create: orderItems },
-      },
-      include: { orderItems: true },
+    // Check stock availability and deduct inventory ATOMICALLY in transaction
+    const order = await prisma.$transaction(async (tx) => {
+      // Atomic stock check + deduct using updateMany with conditional where
+      // This prevents race conditions (no gap between read and write)
+      for (const item of mergedItems) {
+        const result = await tx.product.updateMany({
+          where: {
+            id: item.productId,
+            isActive: true,
+            stockQuantity: { gte: item.quantity }, // Atomic: only update if stock sufficient
+          },
+          data: {
+            stockQuantity: { decrement: item.quantity },
+            purchaseCount: { increment: item.quantity },
+          },
+        });
+
+        if (result.count === 0) {
+          // Stock insufficient or product became inactive — fetch details for error message
+          const product = await tx.product.findUnique({
+            where: { id: item.productId },
+            select: { name: true, stockQuantity: true, isActive: true },
+          });
+          const reason = !product || !product.isActive
+            ? `Product not available`
+            : `Insufficient stock for "${product.name}". Available: ${product.stockQuantity}`;
+          throw Object.assign(new Error(reason), { status: 409 });
+        }
+
+        // Create inventory log
+        const currentProduct = await tx.product.findUnique({
+          where: { id: item.productId },
+          select: { stockQuantity: true },
+        });
+        await tx.inventoryLog.create({
+          data: {
+            productId: item.productId,
+            userId: req.user.id,
+            type: 'sale',
+            quantity: -item.quantity,
+            previousQty: (currentProduct?.stockQuantity ?? 0) + item.quantity,
+            newQty: currentProduct?.stockQuantity ?? 0,
+            reason: 'Order placed',
+            reference: generateOrderNumber(),
+          },
+        });
+      }
+
+      // Create order
+      return await tx.order.create({
+        data: {
+          userId: req.user.id,
+          orderNumber: generateOrderNumber(),
+          shippingAddress,
+          paymentMethod,
+          couponCode,
+          notes,
+          subtotal,
+          shippingFee,
+          totalAmount,
+          orderItems: { create: orderItems },
+        },
+        include: { orderItems: true },
+      });
     });
 
     // Clear user cart
@@ -123,17 +182,29 @@ exports.cancel = async (req, res, next) => {
   try {
     const order = await prisma.order.findFirst({
       where: { id: req.params.id, userId: req.user.id },
+      include: { orderItems: { select: { productId: true, quantity: true } } },
     });
     if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
     if (!['pending', 'confirmed'].includes(order.status)) {
       return res.status(400).json({ success: false, message: 'Order cannot be cancelled at this stage' });
     }
 
-    const updated = await prisma.order.update({
-      where: { id: req.params.id },
-      data: { status: 'cancelled' },
-    });
-    res.json({ success: true, data: updated });
+    // Cancel order AND restore stock atomically
+    await prisma.$transaction([
+      prisma.order.update({
+        where: { id: req.params.id },
+        data: { status: 'cancelled' },
+      }),
+      // Restore inventory for each item
+      ...order.orderItems.map(item =>
+        prisma.product.update({
+          where: { id: item.productId },
+          data: { stockQuantity: { increment: item.quantity } },
+        })
+      ),
+    ]);
+
+    res.json({ success: true, message: 'Order cancelled and stock restored' });
   } catch (err) {
     next(err);
   }

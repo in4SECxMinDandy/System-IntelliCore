@@ -93,9 +93,21 @@ app.get('/health', (req, res) => {
 });
 
 // ==========================================
-// Prometheus Metrics Endpoint
+// Prometheus Metrics Endpoint (protected)
 // ==========================================
-app.get('/metrics', async (req, res) => {
+const metricsAuth = (req, res, next) => {
+  const metricsToken = process.env.METRICS_TOKEN;
+  // Only enforce auth if METRICS_TOKEN is configured
+  if (metricsToken) {
+    const provided = req.headers['x-metrics-token'] || req.query.token;
+    if (provided !== metricsToken) {
+      return res.status(403).json({ error: 'Forbidden: invalid metrics token' });
+    }
+  }
+  next();
+};
+
+app.get('/metrics', metricsAuth, async (req, res) => {
   res.set('Content-Type', register.contentType);
   res.end(await register.metrics());
 });

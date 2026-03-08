@@ -76,6 +76,8 @@ model RefreshToken {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId], name: "idx_refresh_tokens_user")
+  @@index([expiresAt], name: "idx_refresh_tokens_expires")
   @@map("refresh_tokens")
 }
 
@@ -90,6 +92,7 @@ model LoginHistory {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId, createdAt(sort: Desc)], name: "idx_login_history_user")
   @@map("login_history")
 }
 
@@ -192,9 +195,12 @@ model Product {
   userEvents  UserEvent[]
   inventoryLogs InventoryLog[]
 
-  @@index([categoryId], name: "idx_products_category")
-  @@index([isActive], name: "idx_products_active")
-  @@index([averageRating], name: "idx_products_rating")
+  @@index([categoryId, isActive], name: "idx_products_category_active")
+  @@index([isActive, isFeatured], name: "idx_products_active_featured")
+  @@index([isActive, averageRating(sort: Desc)], name: "idx_products_active_rating")
+  @@index([isActive, purchaseCount(sort: Desc)], name: "idx_products_active_popular")
+  @@index([isActive, createdAt(sort: Desc)], name: "idx_products_active_new")
+  @@index([brandId, isActive], name: "idx_products_brand_active")
   @@map("products")
 }
 
@@ -317,10 +323,12 @@ model Order {
   user       User?       @relation(fields: [userId], references: [id])
   orderItems OrderItem[]
   reviews    Review[]
+  payments   Payment[]
 
-  @@index([userId], name: "idx_orders_user")
-  @@index([status], name: "idx_orders_status")
-  @@index([createdAt(sort: Desc)], name: "idx_orders_created")
+  @@index([userId, status], name: "idx_orders_user_status")
+  @@index([userId, createdAt(sort: Desc)], name: "idx_orders_user_created")
+  @@index([status, createdAt(sort: Desc)], name: "idx_orders_status_created")
+  @@index([paymentStatus], name: "idx_orders_payment_status")
   @@map("orders")
 }
 
@@ -425,6 +433,8 @@ model Review {
   user    User?   @relation(fields: [userId], references: [id])
   order   Order?  @relation(fields: [orderId], references: [id])
 
+  @@index([productId, isApproved], name: "idx_reviews_product_approved")
+  @@index([userId, createdAt(sort: Desc)], name: "idx_reviews_user_created")
   @@map("reviews")
 }
 
@@ -597,6 +607,10 @@ model Payment {
   createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz
 
+  order Order @relation(fields: [orderId], references: [id])
+
+  @@index([orderId], name: "idx_payments_order")
+  @@index([status, createdAt(sort: Desc)], name: "idx_payments_status_created")
   @@map("payments")
 }
 

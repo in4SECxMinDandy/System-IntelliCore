@@ -15,6 +15,7 @@ import os
 from routers import recommendations, health, training
 from routers.chatbot import router as chatbot_router
 from routers.moderation import router as moderation_router
+from routers.events import router as events_router
 from services.model_manager import ModelManager
 
 logging.basicConfig(
@@ -133,6 +134,10 @@ app.include_router(
     prefix="/moderation",
     tags=["Moderation"]
 )
+app.include_router(
+    events_router,
+    tags=["Events"]
+)
 
 
 @app.get("/", tags=["Root"])
@@ -144,6 +149,7 @@ async def root():
         "docs": "/docs",
         "endpoints": {
             "recommendations": "/recommendations",
+            "events": "/events/track",
             "training": "/training",
             "health": "/health",
             "metrics": "/metrics",

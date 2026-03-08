@@ -75,6 +75,9 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Singleton refresh promise to prevent concurrent token refresh requests (race condition fix)
+let refreshPromise: Promise<string | null> | null = null;
+
 // Auto-refresh on 401 and handle network errors
 api.interceptors.response.use(
   (res) => res,
@@ -83,7 +86,6 @@ api.interceptors.response.use(
 
     // Handle network errors (ERR_EMPTY_RESPONSE, ECONNABORTED, etc.)
     if (!error.response && original) {
-      console.error('Network error:', error.message);
       // Don't retry if it's a timeout
       if (error.code === 'ECONNABORTED') {
         return Promise.reject(new Error('Yêu cầu đã hết thời gian chờ. Vui lòng thử lại.'));
@@ -97,25 +99,37 @@ api.interceptors.response.use(
     // Handle 401 - Token expired
     if (error.response?.status === 401 && original && !original._retry) {
       original._retry = true;
+
+      // Use singleton refresh promise to avoid concurrent refresh requests
+      if (!refreshPromise) {
+        refreshPromise = (async (): Promise<string | null> => {
+          try {
+            const refreshToken = localStorage.getItem('refreshToken');
+            if (!refreshToken) throw new Error('No refresh token');
+            const { data } = await axios.post(`${API_URL}/api/auth/refresh`, { refreshToken });
+            localStorage.setItem('accessToken', data.data.accessToken);
+            localStorage.setItem('refreshToken', data.data.refreshToken);
+            return data.data.accessToken;
+          } catch {
+            return null;
+          }
+        })().finally(() => {
+          refreshPromise = null; // Reset after completion
+        });
+      }
+
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
-        const { data } = await axios.post(`${API_URL}/api/auth/refresh`, { refreshToken });
-        localStorage.setItem('accessToken', data.data.accessToken);
-        localStorage.setItem('refreshToken', data.data.refreshToken);
-        original.headers.Authorization = `Bearer ${data.data.accessToken}`;
+        const newToken = await refreshPromise;
+        if (!newToken) throw new Error('Refresh failed');
+        original.headers.Authorization = `Bearer ${newToken}`;
         return api(original);
       } catch {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
       }
-    }
-
-    // Log error for debugging
-    if (error.response) {
-      console.error(`API Error ${error.response.status}:`, error.response.data);
-    } else {
-      console.error('Network Error:', error.message);
     }
 
     return Promise.reject(error);

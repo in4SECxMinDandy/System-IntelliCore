@@ -8,6 +8,7 @@ import logging
 from datetime import datetime
 from typing import Optional, Dict, Any
 import numpy as np
+from services.recommender import HybridRecommender
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,7 @@ class ModelManager:
         self.user_index: Dict[str, int] = {}   # user_id -> matrix index
         self.index_to_item: Dict[int, str] = {}  # matrix index -> product_id
         self.popular_items: list = []  # Fallback popular items
+        self.recommender: Optional[HybridRecommender] = None  # Main recommender
 
     async def load_models(self):
         """Load pre-trained models from disk."""
@@ -61,9 +63,16 @@ class ModelManager:
 
             self.models_loaded = True
             logger.info("✅ All available models loaded")
+
+            # Initialize HybridRecommender (will use model artifacts if available)
+            self.recommender = HybridRecommender()
+            logger.info("✅ HybridRecommender initialized")
         except Exception as e:
             logger.warning(f"Could not load models (will use fallback): {e}")
             self.models_loaded = False
+            # Still create a recommender (will return empty/fallback results)
+            if self.recommender is None:
+                self.recommender = HybridRecommender()
 
     def save_models(self, cf_model=None, item_vectors=None, item_index=None,
                     user_index=None, index_to_item=None, popular_items=None):
@@ -99,3 +108,13 @@ class ModelManager:
         self.models_loaded = True
         self.last_trained = datetime.utcnow().isoformat()
         logger.info("✅ Models saved to disk")
+
+    async def cleanup(self):
+        """Release model resources on shutdown."""
+        logger.info("🧹 Cleaning up ML model resources...")
+        self.recommender = None
+        self.cf_model = None
+        self.item_vectors = None
+        self.popular_items = []
+        self.models_loaded = False
+        logger.info("✅ ML cleanup complete")

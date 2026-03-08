@@ -208,11 +208,10 @@ exports.advancedSearch = async (req, res, next) => {
       inStock,
       // Availability
       isFeatured,
-      isNew,
+      isNew: _isNew, // Reserved for future use (new arrivals filter)
       onSale,
       // Sort options
       sort = 'relevance',
-      order = 'desc',
       // Tags
       tags,
     } = req.query;

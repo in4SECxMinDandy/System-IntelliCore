@@ -6,6 +6,9 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Toaster } from 'react-hot-toast';
 import ChatbotWidget from '@/components/ChatbotWidget';
+import NavigationProgress from '@/components/NavigationProgress';
+import PageTransition from '@/components/PageTransition';
+import { Suspense } from 'react';
 
 // Material Symbols Outlined font
 const materialSymbols = {
@@ -76,10 +79,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             Skip to main content
           </a>
 
+          {/* Navigation loading progress bar */}
+          <Suspense fallback={null}>
+            <NavigationProgress />
+          </Suspense>
+
           <Navbar />
 
           <main id="main-content" className="min-h-screen">
-            {children}
+            <PageTransition>
+              {children}
+            </PageTransition>
           </main>
 
           <Footer />

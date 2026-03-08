@@ -88,9 +88,9 @@ module.exports = {
         foreground: 'hsl(var(--foreground))',
       },
       fontFamily: {
-        // Stitch font: Space Grotesk + system fonts
-        sans: ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif'],
-        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        // Stitch font: use CSS variable from next/font (Spline Sans loaded in layout.tsx)
+        sans: ['var(--font-spline-sans)', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['var(--font-spline-sans)', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Courier New', 'monospace'],
       },
       animation: {

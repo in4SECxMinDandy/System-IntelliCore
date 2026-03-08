@@ -207,14 +207,24 @@ exports.getPaymentHistory = async (req, res, next) => {
   try {
     const { page = 1, limit = 20 } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
+    const userId = req.user.id;
+
+    // Get user's order IDs first to prevent IDOR (accessing other users' payments)
+    const userOrders = await prisma.order.findMany({
+      where: { userId },
+      select: { id: true },
+    });
+    const orderIds = userOrders.map((o) => o.id);
 
     const [payments, total] = await Promise.all([
       prisma.payment.findMany({
+        where: { orderId: { in: orderIds } },
         skip,
         take: parseInt(limit),
         orderBy: { createdAt: 'desc' },
+        include: { order: { select: { orderNumber: true } } },
       }),
-      prisma.payment.count(),
+      prisma.payment.count({ where: { orderId: { in: orderIds } } }),
     ]);
 
     res.json({

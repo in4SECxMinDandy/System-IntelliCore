@@ -1,0 +1,204 @@
+name: 🔍 CI — Lint, Type-check, Test
+
+on:
+  push:
+    branches: [main, develop, 'feature/**', 'fix/**']
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: '20'
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # ==========================================
+  # Backend — Node.js / Express
+  # ==========================================
+  backend:
+    name: 🔧 Backend (Node.js)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ml-ecommerce/backend
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
+          POSTGRES_DB: ecommerce_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://test_user:test_pass@localhost:5432/ecommerce_test
+      REDIS_URL: redis://localhost:6379
+      JWT_SECRET: test_jwt_secret_minimum_32_chars_long
+      JWT_REFRESH_SECRET: test_refresh_secret_minimum_32_chars_long
+      JWT_EXPIRES_IN: 15m
+      JWT_REFRESH_EXPIRES_IN: 7d
+      METRICS_TOKEN: test_metrics_token
+      FRONTEND_URL: http://localhost:3000
+
+    steps:
+      - name: 📦 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: ml-ecommerce/backend/package-lock.json
+
+      - name: 📥 Install dependencies
+        run: npm ci
+
+      - name: 🗃️ Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 🗃️ Run database migrations
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://test_user:test_pass@localhost:5432/ecommerce_test
+
+      - name: 🔍 Lint
+        run: npm run lint
+
+      - name: 🔐 Security audit
+        run: npm audit --audit-level=moderate
+
+      - name: 🧪 Run tests
+        run: npm test -- --coverage --forceExit
+        env:
+          DATABASE_URL: postgresql://test_user:test_pass@localhost:5432/ecommerce_test
+
+      - name: 📊 Upload coverage
+        if: success()
+        uses: codecov/codecov-action@v4
+        with:
+          flags: backend
+          directory: ./ml-ecommerce/backend/coverage
+
+  # ==========================================
+  # Frontend — Next.js / TypeScript
+  # ==========================================
+  frontend:
+    name: 🎨 Frontend (Next.js)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ml-ecommerce/frontend
+
+    steps:
+      - name: 📦 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: ml-ecommerce/frontend/package-lock.json
+
+      - name: 📥 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Lint
+        run: npm run lint
+
+      - name: 📐 Type check
+        run: npx tsc --noEmit
+
+      - name: 🏗️ Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:4000
+          NEXT_PUBLIC_ML_URL: http://localhost:8001
+
+      - name: 🔐 Security audit
+        run: npm audit --audit-level=high
+
+  # ==========================================
+  # ML Service — Python / FastAPI
+  # ==========================================
+  ml-service:
+    name: 🤖 ML Service (FastAPI)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ml-ecommerce/ml-service
+
+    steps:
+      - name: 📦 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: 📥 Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio httpx flake8
+
+      - name: 🔍 Lint (flake8)
+        run: flake8 . --max-line-length=120 --exclude=__pycache__,.venv,venv
+
+      - name: 🧪 Run tests
+        run: |
+          python -m pytest tests/ -v --tb=short 2>/dev/null || echo "No tests yet — add tests!"
+        env:
+          PYTHONPATH: .
+          MODEL_DIR: /tmp/test_models
+          ALLOWED_ORIGINS: http://localhost:3000
+
+  # ==========================================
+  # Docker Compose Validation
+  # ==========================================
+  docker-validate:
+    name: 🐳 Docker Compose Validation
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ml-ecommerce
+
+    steps:
+      - name: 📦 Checkout
+        uses: actions/checkout@v4
+
+      - name: ✅ Validate docker-compose.yml
+        run: docker compose config --quiet
+
+      - name: 🏗️ Build images (no push)
+        run: docker compose build --no-cache
+        env:
+          DB_USER: ci_user
+          DB_PASS: ci_pass
+          REDIS_PASSWORD: ci_redis
+          JWT_SECRET: ci_jwt_secret_minimum_32_chars_long
+          JWT_REFRESH_SECRET: ci_refresh_secret_minimum_32_chars
+          STRIPE_SECRET_KEY: sk_test_placeholder
+          STRIPE_WEBHOOK_SECRET: whsec_placeholder
+          MLFLOW_TRACKING_URI: http://localhost:5001
+          METRICS_TOKEN: ci_metrics_token

@@ -1,0 +1,119 @@
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "POST /api/orders HTTP/1.1" 201 999 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "POST /api/orders HTTP/1.1" 400 63 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "POST /api/orders HTTP/1.1" 400 83 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "POST /api/orders HTTP/1.1" 400 95 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "POST /api/orders HTTP/1.1" 201 999 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "POST /api/orders HTTP/1.1" 409 94 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "POST /api/auth/register HTTP/1.1" 201 764 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "POST /api/orders HTTP/1.1" 201 999 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "PATCH /api/orders/f09cb057-de09-4a14-8d5b-a5a807f2e19a/cancel HTTP/1.1" 200 63 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "POST /api/orders HTTP/1.1" 201 999 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "PATCH /api/orders/9180bc56-15a1-4f3c-aaae-4a5a69a18ec6/cancel HTTP/1.1" 400 69 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "POST /api/orders HTTP/1.1" 201 999 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "PATCH /api/orders/d00d4640-e5d4-403b-8f81-04fecf6095d7/cancel HTTP/1.1" 404 45 "-" "-"
+PASS tests/controllers/orders.test.js (5.888 s)
+  ● Console
+
+    console.log
+      2026-03-07T12:09:13.401Z [[33mwarn[39m]: Client error 409: Insufficient stock for "Test Product for Orders". Available: 0 {"method":"POST","path":"/api/orders","userId":"550e8400-e29b-41d4-a716-446655440000","ip":"::ffff:127.0.0.1","errorName":"Error"}
+
+      at Console.log (node_modules/winston/lib/winston/transports/console.js:87:23)
+
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "GET /api/orders?page=1&limit=10 HTTP/1.1" 200 - "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:13 +0000] "GET /api/orders HTTP/1.1" 200 - "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:14 +0000] "POST /api/auth/register HTTP/1.1" 409 84 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:14 +0000] "POST /api/auth/register HTTP/1.1" 400 123 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:14 +0000] "POST /api/auth/register HTTP/1.1" 400 119 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:14 +0000] "POST /api/auth/login HTTP/1.1" 200 - "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:15 +0000] "POST /api/auth/login HTTP/1.1" 401 49 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:15 +0000] "POST /api/auth/login HTTP/1.1" 401 49 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:15 +0000] "POST /api/auth/login HTTP/1.1" 200 - "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:15 +0000] "GET /api/auth/me HTTP/1.1" 200 242 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:15 +0000] "GET /api/auth/me HTTP/1.1" 401 47 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:15 +0000] "GET /api/auth/me HTTP/1.1" 401 54 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:15 +0000] "POST /api/auth/refresh HTTP/1.1" 409 84 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:15 +0000] "POST /api/auth/refresh HTTP/1.1" 401 43 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:15 +0000] "POST /api/auth/refresh HTTP/1.1" 400 52 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:15 +0000] "POST /api/auth/logout HTTP/1.1" 200 39 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:15 +0000] "POST /api/auth/forgot-password HTTP/1.1" 200 86 "-" "-"
+::ffff:127.0.0.1 - - [07/Mar/2026:12:09:15 +0000] "POST /api/auth/forgot-password HTTP/1.1" 200 86 "-" "-"
+FAIL tests/controllers/auth.test.js (8.053 s)
+  ● Console
+
+    console.log
+      prisma:error 
+      Invalid `prisma.user.create()` invocation in
+      C:\Users\haqua\Documents\GitHub\System-IntelliCore\ml-ecommerce\backend\src\controllers\authController.js:42:36
+      
+        39 const { email, password, fullName } = req.body;
+        40 const passwordHash = await bcrypt.hash(password, 12);
+        41 
+      → 42 const user = await prisma.user.create(
+      Unique constraint failed on the fields: (`email`)
+
+      at Object.mc (node_modules/@prisma/client/runtime/library.js:21:432)
+
+    console.log
+      2026-03-07T12:09:14.097Z [[33mwarn[39m]: Prisma P2002: 
+      Invalid `prisma.user.create()` invocation in
+      C:\Users\haqua\Documents\GitHub\System-IntelliCore\ml-ecommerce\backend\src\controllers\authController.js:42:36
+      
+        39 const { email, password, fullName } = req.body;
+        40 const passwordHash = await bcrypt.hash(password, 12);
+        41 
+      → 42 const user = await prisma.user.create(
+      Unique constraint failed on the fields: (`email`) {"method":"POST","path":"/api/auth/register","ip":"::ffff:127.0.0.1","errorName":"PrismaClientKnownRequestError","errorCode":"P2002"}
+
+      at Console.log (node_modules/winston/lib/winston/transports/console.js:87:23)
+
+    console.log
+      prisma:error 
+      Invalid `prisma.refreshToken.create()` invocation in
+      C:\Users\haqua\Documents\GitHub\System-IntelliCore\ml-ecommerce\backend\src\controllers\authController.js:149:31
+      
+        146 await prisma.refreshToken.delete({ where: { token: refreshToken } });
+        147 const tokens = generateTokens(user);
+        148 const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      → 149 await prisma.refreshToken.create(
+      Unique constraint failed on the fields: (`token`)
+
+      at Object.mc (node_modules/@prisma/client/runtime/library.js:21:432)
+
+    console.log
+      2026-03-07T12:09:15.823Z [[33mwarn[39m]: Prisma P2002: 
+      Invalid `prisma.refreshToken.create()` invocation in
+      C:\Users\haqua\Documents\GitHub\System-IntelliCore\ml-ecommerce\backend\src\controllers\authController.js:149:31
+      
+        146 await prisma.refreshToken.delete({ where: { token: refreshToken } });
+        147 const tokens = generateTokens(user);
+        148 const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      → 149 await prisma.refreshToken.create(
+      Unique constraint failed on the fields: (`token`) {"method":"POST","path":"/api/auth/refresh","ip":"::ffff:127.0.0.1","errorName":"PrismaClientKnownRequestError","errorCode":"P2002"}
+
+      at Console.log (node_modules/winston/lib/winston/transports/console.js:87:23)
+
+  ● Auth API › POST /api/auth/refresh › should refresh tokens with valid refresh token
+
+    expected 200 "OK", got 409 "Conflict"
+
+    [0m [90m 181 |[39m                 [33m.[39mpost([32m'/api/auth/refresh'[39m)
+     [90m 182 |[39m                 [33m.[39msend({ refreshToken })
+    [31m[1m>[22m[39m[90m 183 |[39m                 [33m.[39mexpect([35m200[39m)[33m;[39m
+     [90m     |[39m                  [31m[1m^[22m[39m
+     [90m 184 |[39m
+     [90m 185 |[39m             expect(res[33m.[39mbody[33m.[39msuccess)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 186 |[39m             expect(res[33m.[39mbody[33m.[39mdata)[33m.[39mtoHaveProperty([32m'accessToken'[39m)[33m;[39m[0m
+
+      at Object.expect (tests/controllers/auth.test.js:183:18)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:252:14)
+      at node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/supertest/lib/test.js:120:14)
+
+Test Suites: 1 failed, 1 passed, 2 total
+Tests:       1 failed, 27 passed, 28 total
+Snapshots:   0 total
+Time:        8.777 s, estimated 10 s
+Ran all test suites.

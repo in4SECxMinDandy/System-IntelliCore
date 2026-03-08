@@ -27,4 +27,44 @@ router.post('/refresh', authController.refreshToken);
 router.post('/logout', authenticate, authController.logout);
 router.get('/me', authenticate, authController.getMe);
 
+// Password reset routes
+router.post('/forgot-password',
+  authLimiter,
+  [body('email').isEmail().normalizeEmail()],
+  authController.forgotPassword
+);
+
+router.post('/reset-password',
+  authLimiter,
+  [
+    body('token').notEmpty(),
+    body('email').isEmail().normalizeEmail(),
+    body('newPassword').isLength({ min: 8 }),
+  ],
+  authController.resetPassword
+);
+
+router.post('/change-password',
+  authenticate,
+  [
+    body('currentPassword').notEmpty(),
+    body('newPassword').isLength({ min: 8 }),
+  ],
+  authController.changePassword
+);
+
+// Email verification routes
+router.post('/send-verification',
+  authenticate,
+  authController.sendVerificationEmail
+);
+
+router.post('/verify-email',
+  authLimiter,
+  [
+    body('token').notEmpty(),
+  ],
+  authController.verifyEmail
+);
+
 module.exports = router;
